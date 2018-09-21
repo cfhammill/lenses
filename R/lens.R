@@ -22,10 +22,8 @@
 #' doing the second put.
 #'
 #' @examples
-#' ```
-#' get(1:10, index(4)) # returns 4
-#' set(1:10, index(1), 10) # returns c(10, 2:10)
-#' ```
+#'   view(1:10, index(4)) # returns 4
+#'   over(1:10, index(1), 10) # returns c(10, 2:10)
 #' @export
 mkLens <- function(view, over){
   structure(
@@ -80,7 +78,7 @@ over <- function(d, l, x){
 #' @param l the lens
 #' @export
 view <- function(d, l){
-  if(!inherits(x, "lens"))
+  if(!inherits(l, "lens"))
     stop("view is only defined for lenses")
 
   l$view(d)
@@ -111,7 +109,7 @@ index <- function(el){
 indexes <- function(els){
   mkLens(view = function(d) d[els]
        , over = function(d, x){
-         d[el] <- x
+         d[els] <- x
          d
        })
 }

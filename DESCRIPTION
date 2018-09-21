@@ -1,8 +1,8 @@
 Package: fresnel
 Version: 0.0.0.9000
-Title: What the Package Does (One Line, Title Case)
-Description: What the package does (one paragraph).
-Authors@R: person("First", "Last", , "first.last@example.com", c("aut", "cre"))
+Title: A Lens Library For R
+Description: Provide lens, for clean functional getting and setting
+Authors@R: c(person("Chris", "Hammill", , "cfhammill@gmail.com", c("aut", "cre")), person("Ben", "Darwin", , "an@email.com", "aut"))
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
