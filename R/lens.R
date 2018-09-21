@@ -25,13 +25,26 @@
 #' ```
 #' get(1:10, index(4)) # returns 4
 #' set(1:10, index(1), 10) # returns c(10, 2:10)
+#' ```
+#' @export
 mkLens <- function(view, over){
   structure(
     list(view = view
        , over = over)
   , class = "lens")
 }
-  
+
+#' Compose lenses
+#'
+#' Compose two lenses to view or modify a subcomponent of
+#' a subcomponent. Lenses compose such that they are evaluated
+#' left to right, get with the first then get with the second lens,
+#' and set with the first lens the result of setting with the second
+#' lens. See the code for a better explanation.
+#'
+#' @param l the first lens
+#' @param m the second lens
+#' @export
 `%..%` <- function(l, m){
   if(!inherits(l, "lens") || !inherits(m, "lens"))
     stop("lens composition is only defined for lenses")
@@ -43,6 +56,15 @@ mkLens <- function(view, over){
 }
 
 
+#' Modify data with a lens
+#'
+#' Set the subcomponent of the data referred to by a lens
+#' with a new value. See [mkLens] for details.
+#'
+#' @param d the data
+#' @param l the lens
+#' @param x the replacement value
+#' @export
 over <- function(d, l, x){
   if(!inherits(l,"lens"))
     stop("over is only defined for lenses")
@@ -50,6 +72,13 @@ over <- function(d, l, x){
   l$over(d, x)
 }
 
+#' View data with a lens
+#'
+#' View the subcomponent of the data referred to by a lens.
+#'
+#' @param d the data
+#' @param l the lens
+#' @export
 view <- function(d, l){
   if(!inherits(x, "lens"))
     stop("view is only defined for lenses")
@@ -57,7 +86,13 @@ view <- function(d, l){
   l$view(d)
 }
 
-
+#' Construct a lens into an index/name
+#'
+#' This is the lens version of `[[`
+#'
+#' @param el The element the lens should point to
+#' can be an `integer` or name.
+#' @export
 index <- function(el){
   mkLens(view = function(d) d[[el]]
        , over = function(d, x){
@@ -66,24 +101,49 @@ index <- function(el){
        })
 }
 
-indexes <- function(el){
-  mkLens(view = function(d) d[el]
+#' Construct a lens into a subset of an object
+#'
+#' This is the lens version of `[`
+#'
+#' @param els a subset vector, can be `integer`, `character`
+#' of `logical`, pointing to one or more elements of the object
+#' @export
+indexes <- function(els){
+  mkLens(view = function(d) d[els]
        , over = function(d, x){
          d[el] <- x
          d
        })
 }
 
+#' A lens into the names of an object
+#'
+#' The lens versions of `names` and `names<-`.
+#' @export
 namel <- mkLens(view = names
               , over = `names<-`
                 )
 
+#' A lens into the column names of an object
+#'
+#' The lens version of `colnames` and `colnames<-`
+#' @export
 colnamesl <- mkLens(view = colnames
                   , over = `colnames<-`)
 
+#' A lens into the row names of an object
+#'
+#' The lens version of `rownames` and `rownames<-`
+#' @export
 rownamesl <- mkLens(view = rownames
                   , over = `rownames<-`)
 
+#' Construct a lens into an attribute
+#'
+#' The lens version of `attr` and `attr<-`
+#' @param attrib A length one character vector indicating
+#' the attribute to lens into.
+#' @export
 attrl <- function(attrib){
   mkLens(view = function(d) attr(d, attrib)
        , over = function(d,x) `attr<-`(d, attrib, x))
