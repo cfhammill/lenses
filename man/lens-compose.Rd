@@ -7,7 +7,7 @@
 l \%..\% m
 }
 \arguments{
-\item{l}{the first lens}
+\item{l}{the first \link{lens} (or an \link{oscope})}
 
 \item{m}{the second lens}
 }

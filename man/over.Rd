@@ -7,14 +7,14 @@
 over(d, l, x)
 }
 \arguments{
-\item{d}{the data}
+\item{d}{the data, or an \link{oscope}}
 
-\item{l}{the lens}
+\item{l}{the lens, or in the case of an \code{oscope}, the replacement}
 
-\item{x}{the replacement value}
+\item{x}{the replacement value, or nothing in the case of an \code{oscope}}
 }
 \description{
 Set the subcomponent of the data referred to by a lens
-with a new value. See \link{mkLens} for details.  Merely dispatches
+with a new value. See \link{lens} for details.  Merely dispatches
 to the \code{over} component of the lens.
 }
