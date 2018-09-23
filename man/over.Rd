@@ -15,5 +15,6 @@ over(d, l, x)
 }
 \description{
 Set the subcomponent of the data referred to by a lens
-with a new value. See \link{mkLens} for details.
+with a new value. See \link{mkLens} for details.  Merely dispatches
+to the \code{over} component of the lens.
 }

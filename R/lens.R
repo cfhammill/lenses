@@ -17,7 +17,7 @@
 #' they allow you to build pure, compositional, and re-usable "getters" and "setters".
 #'
 #' An author of a `lens` (via `mkLens`) should ensure it obeys the following
-#' rules (the "Lenz laws", here paraphrased from
+#' rules (the "Lens laws", here paraphrased from
 #' www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial):
 #'
 #' 1. Get-Put: If you get (view) some data with a lens, and then
@@ -55,6 +55,7 @@ mkLens <- function(view, over){
 #' is analogous to the `.` syntax of object-oriented programming or to
 #' a flipped version of function composition.
 #'
+#' @rdname lens-compose
 #' @param l the first lens
 #' @param m the second lens
 #' @examples

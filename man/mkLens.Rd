@@ -7,22 +7,29 @@
 mkLens(view, over)
 }
 \arguments{
-\item{view}{A function that takes data and returns a subpart
-of that structure}
+\item{view}{A function that takes a data structure of a certain type
+and returns a subpart of that structure}
 
-\item{over}{A function that takes data and a value and replaces
-the given subpart of the data with that value.}
+\item{over}{A function that takes a data structure of a certain type
+and a value and returns a new data structure with the given subpart
+replaced with the given value.  Note that \code{over} should not modify
+the original data.}
 }
 \description{
-A lens consists of a \code{view} function and
-an \code{over} function, a getter and setter respectively.
+A \code{lens} represents the process of focussing on a specific part of a data structure.
+We represent this via a \code{view} function and
+an \code{over} function, roughly corresponding to object-oriented
+"getters" and "setters" respectively.
 Lenses can be composed to access or modify deeply nested
 structures.
 }
 \details{
-lenses are popular in functional programming because
-they allow you to compositionally build functional getters and
-setters. Lens need to follow the following rules (laws)
+Lenses are popular in functional programming because
+they allow you to build pure, compositional, and re-usable "getters" and "setters".
+
+An author of a \code{lens} (via \code{mkLens}) should ensure it obeys the following
+rules (the "Lens laws", here paraphrased from
+www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial):
 \enumerate{
 \item Get-Put: If you get (view) some data with a lens, and then
 modify (over) the data with that value, you get the input data back.
@@ -32,6 +39,11 @@ then get that value with the lens, you get back what you put in.
 then put another value with the same lens, it's the same as only
 doing the second put.
 }
+
+There is nothing particularly new about the lenses appearing here.
+For a fairly comprehensive (and rather technical) history of lenses, see
+https://github.com/ekmett/lens/wiki/History-of-Lenses and
+https://julesh.com/2018/08/16/lenses-for-philosophers/ .
 }
 \examples{
   view(1:10, index(4)) # returns 4

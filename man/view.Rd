@@ -12,5 +12,6 @@ view(d, l)
 \item{l}{the lens}
 }
 \description{
-View the subcomponent of the data referred to by a lens.
+View the subcomponent of the data referred to by a lens.  This function
+merely dispatches to the \code{view} component of the lens.
 }
