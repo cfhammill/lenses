@@ -46,6 +46,6 @@ https://github.com/ekmett/lens/wiki/History-of-Lenses and
 https://julesh.com/2018/08/16/lenses-for-philosophers/ .
 }
 \examples{
-  lget(1:10, index(4)) # returns 4
-  lset(1:10, index(1), 10) # returns c(10, 2:10)
+  lget(1:10, index_l(4)) # returns 4
+  lset(1:10, index_l(1), 10) # returns c(10, 2:10)
 }

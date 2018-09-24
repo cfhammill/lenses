@@ -4,7 +4,7 @@
 \alias{oscope}
 \title{Bind data to a lens}
 \usage{
-oscope(d, l = idl)
+oscope(d, l = id_l)
 }
 \arguments{
 \item{d}{The data for interest}
@@ -19,7 +19,7 @@ These can be integrated easily with normal data pipelines.
 \examples{
 list(a = 5, b = 1:3, c = 8) \%>\%
   oscope()   \%.\%
-  index("b") \%.\%
-  index(1)   \%>\%
+  index_l("b") \%.\%
+  index_l(1)   \%>\%
   lset(10)
 }

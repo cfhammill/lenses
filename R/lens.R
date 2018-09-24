@@ -34,8 +34,8 @@
 #' https://julesh.com/2018/08/16/lenses-for-philosophers/ .
 #'
 #' @examples
-#'   lget(1:10, index(4)) # returns 4
-#'   lset(1:10, index(1), 10) # returns c(10, 2:10)
+#'   lget(1:10, index_l(4)) # returns 4
+#'   lset(1:10, index_l(1), 10) # returns c(10, 2:10)
 #' @export
 lens <- function(lget, lset){
   structure(
@@ -55,11 +55,11 @@ lens <- function(lget, lset){
 #' @examples
 #' list(a = 5, b = 1:3, c = 8) %>%
 #'   oscope()   %.%
-#'   index("b") %.%
-#'   index(1)   %>%
+#'   index_l("b") %.%
+#'   index_l(1)   %>%
 #'   lset(10)
 #' @export
-oscope <- function(d, l = idl){
+oscope <- function(d, l = id_l){
   structure(
     list(data = d, lens = l)
   , class = "oscope")
@@ -81,7 +81,7 @@ oscope <- function(d, l = idl){
 #' @param m the second lens
 #' @examples
 #'   lst <- list(b = c(3,4,5))
-#'   lns <- index("b") %.% index(2)
+#'   lns <- index_l("b") %.% index_l(2)
 #'   lst %>% lget(lns)                 # returns 4
 #'   lst %>% lset(lns, 1)              # returns list(b = c(3,2,5))
 #'   lst                               # returns list(b = c(3,4,5))
@@ -171,7 +171,7 @@ lget.oscope <- function(d, l){
 #'
 #' This lens focuses on the whole object
 #' @export
-idl <- lens(identity, function(., x) x)
+id_l <- lens(identity, function(., x) x)
 
 #' Construct a lens into an index/name
 #'
@@ -180,7 +180,7 @@ idl <- lens(identity, function(., x) x)
 #' @param el The element the lens should point to
 #' can be an `integer` or name.
 #' @export
-index <- function(el){
+index_l <- function(el){
   lens(lget = function(d) d[[el]]
        , lset = function(d, x){
          d[[el]] <- x
@@ -195,7 +195,7 @@ index <- function(el){
 #' @param els a subset vector, can be `integer`, `character`
 #' of `logical`, pointing to one or more elements of the object
 #' @export
-indexes <- function(els){
+indexes_l <- function(els){
   lens(lget = function(d) d[els]
        , lset = function(d, x){
          d[els] <- x
@@ -207,21 +207,21 @@ indexes <- function(els){
 #'
 #' The lens versions of `names` and `names<-`.
 #' @export
-namel <- lens(lget = names
+names_l <- lens(lget = names
               , lset = `names<-`)
 
 #' A lens into the column names of an object
 #'
 #' The lens version of `colnames` and `colnames<-`
 #' @export
-colnamesl <- lens(lget = colnames
+colnames_l <- lens(lget = colnames
                   , lset = `colnames<-`)
 
 #' A lens into the row names of an object
 #'
 #' The lens version of `rownames` and `rownames<-`
 #' @export
-rownamesl <- lens(lget = rownames
+rownames_l <- lens(lget = rownames
                   , lset = `rownames<-`)
 
 #' Construct a lens into an attribute
@@ -230,7 +230,7 @@ rownamesl <- lens(lget = rownames
 #' @param attrib A length one character vector indicating
 #' the attribute to lens into.
 #' @export
-attrl <- function(attrib){
+attr_l <- function(attrib){
   lens(lget = function(d) attr(d, attrib)
        , lset = function(d, x) `attr<-`(d, attrib, x))
 }
@@ -240,7 +240,7 @@ attrl <- function(attrib){
 #' A lens into the environment of an object. This
 #' is the lens version of [environment] and [environment<-]
 #' @export
-envl <- lens(environment, `environment<-`)
+env_l <- lens(environment, `environment<-`)
 
 #' Tidyselect elements by name
 #'
@@ -251,9 +251,9 @@ envl <- lens(environment, `environment<-`)
 #' which is the same interpretter as [dplyr::select]
 #' @examples
 #' lets <- setNames(seq_along(LETTERS), LETTERS)
-#' lset(lets, selectl(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
+#' lset(lets, select_l(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
 #' @export
-selectl <- function(...){
+select_l <- function(...){
   dots <- rlang::quos(...)
   lens(
     lget = function(d){
@@ -273,7 +273,7 @@ selectl <- function(...){
 #'
 #' @param rows the rows to focus on
 #' @export
-rowl <- function(rows){
+rows_l <- function(rows){
   lens(lget = function(d) d[rows, ,drop = FALSE]
      , lset = function(d, x){
        d[rows, ] <- x
@@ -287,7 +287,7 @@ rowl <- function(rows){
 #'
 #' @param cols the columns to focus on
 #' @export
-columnl <- function(cols){
+cols_l <- function(cols){
   lens(lget = function(d) d[, cols,drop = FALSE]
      , lset = function(d, x){
        d[,cols] <- x
