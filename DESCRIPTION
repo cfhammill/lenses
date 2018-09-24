@@ -1,7 +1,7 @@
 Package: fresnel
 Version: 0.0.0.9000
 Title: A Lens Library For R
-Description: Provide lens, for clean functional getting and setting
+Description: Provides lens for clean, functional, getting and setting.
 Authors@R: c(person("Chris", "Hammill", , "cfhammill@gmail.com", c("aut", "cre")), person("Ben", "Darwin", , "an@email.com", "aut"))
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -12,4 +12,6 @@ RoxygenNote: 6.0.1
 Suggests: 
     testthat
 Imports: 
-    magrittr
+    magrittr,
+    tidyselect,
+    rlang

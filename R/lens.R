@@ -234,3 +234,63 @@ attrl <- function(attrib){
   lens(view = function(d) attr(d, attrib)
        , over = function(d, x) `attr<-`(d, attrib, x))
 }
+
+#' Environment lens
+#'
+#' A lens into the environment of an object. This
+#' is the lens version of [environment] and [environment<-]
+#' @export
+envl <- lens(environment, `environment<-`)
+
+#' Tidyselect elements by name
+#'
+#' Create a lens into a named collection to be viewed or replaced.
+#' Names of the input are not changed. This generalizes [dplyr::select]
+#' to arbitrary named collections and allows updating.
+#' @param ... An expression to be interpretted by [tidyselect::vars_select]
+#' which is the same interpretter as [dplyr::select]
+#' @examples
+#' lets <- setNames(seq_along(LETTERS), LETTERS)
+#' over(lets, selectl(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
+#' @export
+selectl <- function(...){
+  dots <- rlang::quos(...)
+  lens(
+    view = function(d){
+      vars <- tidyselect::vars_select(names(d), !!!dots)
+      d[vars]
+    }
+  , over = function(d,x){
+    vars <- tidyselect::vars_select(names(d), !!!dots)
+    d[vars] <- x
+    d
+  })
+}
+
+#' Row lens
+#'
+#' Create a lens into a set of rows
+#'
+#' @param rows the rows to focus on
+#' @export
+rowl <- function(rows){
+  lens(view = function(d) d[rows, ,drop = FALSE]
+     , over = function(d, x){
+       d[rows, ] <- x
+       d
+     })
+}
+
+#' Column lens
+#'
+#' Create a lens into a set of columns
+#'
+#' @param cols the columns to focus on
+#' @export
+columnl <- function(cols){
+  lens(view = function(d) d[, cols,drop = FALSE]
+     , over = function(d, x){
+       d[,cols] <- x
+       d
+     })
+}
