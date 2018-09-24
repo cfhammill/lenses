@@ -1,4 +1,4 @@
 library(testthat)
-library(fresnel)
+library(focal)
 
-test_check("fresnel")
+test_check("focal")
