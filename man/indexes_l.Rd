@@ -2,9 +2,12 @@
 % Please edit documentation in R/lens.R
 \name{indexes_l}
 \alias{indexes_l}
+\alias{indexes}
 \title{Construct a lens into a subset of an object}
 \usage{
 indexes_l(els)
+
+indexes(els)
 }
 \arguments{
 \item{els}{a subset vector, can be \code{integer}, \code{character}
@@ -13,3 +16,8 @@ of \code{logical}, pointing to one or more elements of the object}
 \description{
 This is the lens version of \code{[}
 }
+\section{Functions}{
+\itemize{
+\item \code{indexes}: shorthand
+}}
+

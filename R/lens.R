@@ -188,6 +188,10 @@ index_l <- function(el){
        })
 }
 
+#' @describeIn index_l shorthand
+#' @export
+index <- index_l
+
 #' Construct a lens into a subset of an object
 #'
 #' This is the lens version of `[`
@@ -202,6 +206,10 @@ indexes_l <- function(els){
          d
        })
 }
+
+#' @describeIn indexes_l shorthand
+#' @export
+indexes <- indexes_l
 
 #' A lens into the names of an object
 #'

@@ -2,9 +2,12 @@
 % Please edit documentation in R/lens.R
 \name{index_l}
 \alias{index_l}
+\alias{index}
 \title{Construct a lens into an index/name}
 \usage{
 index_l(el)
+
+index(el)
 }
 \arguments{
 \item{el}{The element the lens should point to
@@ -13,3 +16,8 @@ can be an \code{integer} or name.}
 \description{
 This is the lens version of \code{[[}
 }
+\section{Functions}{
+\itemize{
+\item \code{index}: shorthand
+}}
+
