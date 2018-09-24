@@ -167,6 +167,36 @@ lget.oscope <- function(d, l){
   lget(d$data, d$lens)
 }
 
+#' Map a function over a lens
+#'
+#' Get the data pointed to by a lens, apply a function
+#' and replace it with the result.
+#'
+#' @param d the data (or an [oscope])
+#' @param l the lens (or the function if `d` is an `oscope`)
+#' @param f the function (or nothing if `d` is an `oscope`)
+#' @examples
+#' third_l <- index(3)
+#' over(1:5, third_l, function(x) x + 2)
+#' # returns c(1:2, 5, 4:5)  
+#' @export
+over <- function(d, l, f) UseMethod("over")
+
+#' @method over default
+#' @export
+over.default <- function(d, l, f){
+  lset(d, l, f(lget(d, l)))
+}
+
+#' @method over oscope
+#' @export
+over.oscope <- function(d, l, f){
+  if(!missing("f"))
+    stop("Argument `f` cannot be used with `over` and an `oscope`")
+
+  over(d$data, d$lens, l)
+}
+
 #' The identity (trivial lens)
 #'
 #' This lens focuses on the whole object
