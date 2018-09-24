@@ -12,6 +12,6 @@ lget(d, l)
 \item{l}{the lens}
 }
 \description{
-Lget the subcomponent of the data referred to by a lens.  This function
+Get the subcomponent of the data referred to by a lens.  This function
 merely dispatches to the \code{lget} component of the lens.
 }

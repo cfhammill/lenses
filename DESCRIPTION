@@ -1,6 +1,6 @@
 Package: focal
 Version: 0.0.0.9000
-Title: A Lens Library For R
+Title: A Lens Library for R
 Description: Provides lens for clean, functional, getting and setting.
 Authors@R: c(person("Chris", "Hammill", , "cfhammill@gmail.com", c("aut", "cre", "trl")), person("Ben", "Darwin", , "an@email.com", c("aut", "trl")))
 License: MIT + file LICENSE

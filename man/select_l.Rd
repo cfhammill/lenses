@@ -7,12 +7,12 @@
 select_l(...)
 }
 \arguments{
-\item{...}{An expression to be interpretted by \link[tidyselect:vars_select]{tidyselect::vars_select}
-which is the same interpretter as \link[dplyr:select]{dplyr::select}}
+\item{...}{An expression to be interpreted by \link[tidyselect:vars_select]{tidyselect::vars_select}
+which is the same interpreter as \link[dplyr:select]{dplyr::select}}
 }
 \description{
-Create a lens into a named collection to be lgeted or replaced.
-Names of the input are not changed. This generalizes \link[dplyr:select]{dplyr::select}
+Create a lens into a named collection. On \link{lset}
+names of the input are not changed. This generalizes \link[dplyr:select]{dplyr::select}
 to arbitrary named collections and allows updating.
 }
 \examples{

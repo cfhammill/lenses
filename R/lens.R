@@ -141,7 +141,7 @@ lset.oscope <- function(d,l,x){
 
 #' Lget data with a lens
 #'
-#' Lget the subcomponent of the data referred to by a lens.  This function
+#' Get the subcomponent of the data referred to by a lens.  This function
 #' merely dispatches to the `lget` component of the lens. 
 #'
 #' @param d the data
@@ -282,11 +282,11 @@ env_l <- lens(environment, `environment<-`)
 
 #' Tidyselect elements by name
 #'
-#' Create a lens into a named collection to be lgeted or replaced.
-#' Names of the input are not changed. This generalizes [dplyr::select]
+#' Create a lens into a named collection. On [lset]
+#' names of the input are not changed. This generalizes [dplyr::select]
 #' to arbitrary named collections and allows updating.
-#' @param ... An expression to be interpretted by [tidyselect::vars_select]
-#' which is the same interpretter as [dplyr::select]
+#' @param ... An expression to be interpreted by [tidyselect::vars_select]
+#' which is the same interpreter as [dplyr::select]
 #' @examples
 #' lets <- setNames(seq_along(LETTERS), LETTERS)
 #' lset(lets, select_l(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
@@ -374,7 +374,7 @@ slice_l <- function(dimension, slice, drop = FALSE){
 #' Filter lens
 #'
 #' Create a lens into the result of a filter. Arguments
-#' are interpretted with non-standard evaluation as in
+#' are interpreted with non-standard evaluation as in
 #' [dplyr::filter]
 #'
 #' @param ... unquoted NSE filter arguments

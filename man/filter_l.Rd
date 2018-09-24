@@ -11,6 +11,6 @@ filter_l(...)
 }
 \description{
 Create a lens into the result of a filter. Arguments
-are interpretted with non-standard evaluation as in
+are interpreted with non-standard evaluation as in
 \link[dplyr:filter]{dplyr::filter}
 }
