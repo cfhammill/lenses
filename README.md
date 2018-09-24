@@ -11,16 +11,15 @@ a little bit easier.
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Use `lget` and `lset` to access or modify data with an appropriate lens:
 
 ``` r
-## basic example code
-lget(1:10, index(4)) # returns 4
-lset(1:10, index(1), 10) # returns c(10, 2:10)
+lget(1:10, index(4))      # returns 4
+lset(1:10, index(1), 10)  # returns c(10, 2:10)
 ```
 
 Lenses can be composed together to access objects nested
-within other objects
+within other objects:
 
 ```r
 # Inconveniently replace the first element of list
