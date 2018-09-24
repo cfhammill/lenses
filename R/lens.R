@@ -370,3 +370,32 @@ slice_l <- function(dimension, slice, drop = FALSE){
 
   lens(lget = getter, lset = setter)
 }
+
+#' Filter lens
+#'
+#' Create a lens into the result of a filter. Arguments
+#' are interpretted with non-standard evaluation as in
+#' [dplyr::filter]
+#'
+#' @param ... unquoted NSE filter arguments
+#' @export
+filter_l <- function(...){
+  dots <- rlang::quos(...)
+  if (any(rlang::have_name(dots))) {
+    stop("arguments to filter_l must not be named, do you need `==`?")
+  }
+
+  filt_quo <- Reduce(function(acc,q){ rlang::expr(`|`(!!acc, !!q)) }
+                   , dots
+                   , rlang::expr(FALSE))
+
+  lens(lget = function(d){
+         filt_vec <- rlang::eval_tidy(filt_quo, d)
+         d[filt_vec,]
+       }
+     , lset = function(d,x){
+         filt_vec <- rlang::eval_tidy(filt_quo, d)
+         d[filt_vec,] <- x
+         d
+     })
+}
