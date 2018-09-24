@@ -1,4 +1,4 @@
-# fresnel
+# Focal
 
 A small lens library for R. Aims to make working with nested data structures
 a little bit easier.
@@ -6,7 +6,7 @@ a little bit easier.
 ## Installation
 
 ``` r
- install_github("cfhammill/fresnel")
+ install_github("cfhammill/focal")
 ```
 
 ## Example
