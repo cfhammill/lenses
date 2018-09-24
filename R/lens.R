@@ -310,9 +310,10 @@ select_l <- function(...){
 #' Create a lens into a set of rows
 #'
 #' @param rows the rows to focus on
+#' @param drop whether or not to drop dimensions with length 1 
 #' @export
-rows_l <- function(rows){
-  lens(lget = function(d) d[rows, ,drop = FALSE]
+rows_l <- function(rows, drop = FALSE){
+  lens(lget = function(d) d[rows, ,drop = drop]
      , lset = function(d, x){
        d[rows, ] <- x
        d
@@ -324,11 +325,48 @@ rows_l <- function(rows){
 #' Create a lens into a set of columns
 #'
 #' @param cols the columns to focus on
+#' @param drop whether or not to drop dimensions with length 1
 #' @export
-cols_l <- function(cols){
+cols_l <- function(cols, drop = FALSE){
   lens(lget = function(d) d[, cols,drop = FALSE]
      , lset = function(d, x){
        d[,cols] <- x
        d
      })
+}
+
+#' Slice lens
+#'
+#' Create a lens into a specific slice of a specific
+#' dimension of a multidimensional object. Not to be
+#' confused with dplyr slice.
+#' 
+#' @param dimension the dimension to slice
+#' @param slice the slice index
+#' @param drop whether or not to drop dimensions with length 1 
+#' @export
+slice_l <- function(dimension, slice, drop = FALSE){
+  getter <-
+    function(d){
+      al <- Reduce(function(acc, x){
+        c(acc[-1], alist(,))
+      }, dim(d), init = list())[-1]
+      
+      al[dimension] <- slice
+      args <- c(list(d), al, list(drop = drop))
+      do.call(`[`, args)
+    }
+
+  setter <-
+    function(d, x){
+      al <- Reduce(function(acc, x){
+        c(acc[-1], alist(,))
+      }, dim(d), init = list())[-1]
+      
+      al[dimension] <- slice
+      args <- c(list(d), al, list(x))
+      do.call(`[<-`, args)
+    }
+
+  lens(lget = getter, lset = setter)
 }

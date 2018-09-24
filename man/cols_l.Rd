@@ -4,10 +4,12 @@
 \alias{cols_l}
 \title{Column lens}
 \usage{
-cols_l(cols)
+cols_l(cols, drop = FALSE)
 }
 \arguments{
 \item{cols}{the columns to focus on}
+
+\item{drop}{whether or not to drop dimensions with length 1}
 }
 \description{
 Create a lens into a set of columns

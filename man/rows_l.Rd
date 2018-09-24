@@ -4,10 +4,12 @@
 \alias{rows_l}
 \title{Row lens}
 \usage{
-rows_l(rows)
+rows_l(rows, drop = FALSE)
 }
 \arguments{
 \item{rows}{the rows to focus on}
+
+\item{drop}{whether or not to drop dimensions with length 1}
 }
 \description{
 Create a lens into a set of rows
