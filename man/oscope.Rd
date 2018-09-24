@@ -18,8 +18,8 @@ These can be integrated easily with normal data pipelines.
 }
 \examples{
 list(a = 5, b = 1:3, c = 8) \%>\%
-  oscope()   \%..\%
-  index("b") \%..\%
+  oscope()   \%.\%
+  index("b") \%.\%
   index(1)   \%>\%
-  over(10)
+  lset(10)
 }

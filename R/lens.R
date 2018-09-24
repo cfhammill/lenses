@@ -1,17 +1,17 @@
 #' Construct a lens
 #'
 #' A `lens` represents the process of focussing on a specific part of a data structure.
-#' We represent this via a `view` function and
-#' an `over` function, roughly corresponding to object-oriented
+#' We represent this via a `lget` function and
+#' an `lset` function, roughly corresponding to object-oriented
 #' "getters" and "setters" respectively.
 #' Lenses can be composed to access or modify deeply nested
 #' structures.
 #'
-#' @param view A function that takes a data structure of a certain type
+#' @param lget A function that takes a data structure of a certain type
 #' and returns a subpart of that structure
-#' @param over A function that takes a data structure of a certain type
+#' @param lset A function that takes a data structure of a certain type
 #' and a value and returns a new data structure with the given subpart
-#' replaced with the given value.  Note that `over` should not modify
+#' replaced with the given value.  Note that `lset` should not modify
 #' the original data.
 #' @details Lenses are popular in functional programming because
 #' they allow you to build pure, compositional, and re-usable "getters" and "setters".
@@ -20,9 +20,9 @@
 #' rules (the "Lens laws", here paraphrased from
 #' www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial):
 #'
-#' 1. Get-Put: If you get (view) some data with a lens, and then
-#' modify (over) the data with that value, you get the input data back.
-#' 2. Put-Get: If you put (over) a value into some data with a lens,
+#' 1. Get-Put: If you get (lget) some data with a lens, and then
+#' modify (lset) the data with that value, you get the input data back.
+#' 2. Put-Get: If you put (lset) a value into some data with a lens,
 #' then get that value with the lens, you get back what you put in.
 #' 3. Put-Put: If you put a value into some data with a lens, and
 #' then put another value with the same lens, it's the same as only
@@ -34,13 +34,13 @@
 #' https://julesh.com/2018/08/16/lenses-for-philosophers/ .
 #'
 #' @examples
-#'   view(1:10, index(4)) # returns 4
-#'   over(1:10, index(1), 10) # returns c(10, 2:10)
+#'   lget(1:10, index(4)) # returns 4
+#'   lset(1:10, index(1), 10) # returns c(10, 2:10)
 #' @export
-lens <- function(view, over){
+lens <- function(lget, lset){
   structure(
-    list(view = view
-       , over = over)
+    list(lget = lget
+       , lset = lset)
   , class = "lens")
 }
 
@@ -54,10 +54,10 @@ lens <- function(view, over){
 #' @param l The lens to bind the data to. Defaults to the identity lens
 #' @examples
 #' list(a = 5, b = 1:3, c = 8) %>%
-#'   oscope()   %..%
-#'   index("b") %..%
+#'   oscope()   %.%
+#'   index("b") %.%
 #'   index(1)   %>%
-#'   over(10)
+#'   lset(10)
 #' @export
 oscope <- function(d, l = idl){
   structure(
@@ -69,10 +69,10 @@ oscope <- function(d, l = idl){
 #'
 #' Compose two lenses to produce a new lens which represents
 #' focussing first with the first lens, then with the second.
-#' A `view` using the resulting composite lens will first `view` using
-#' the first, then the second, while an `over` will `view` via the first lens,
-#' `over` into the resulting piece with the second, and then replace the
-#' updated structure in the first with `over`.  Lens composition
+#' A `lget` using the resulting composite lens will first `lget` using
+#' the first, then the second, while an `lset` will `lget` via the first lens,
+#' `lset` into the resulting piece with the second, and then replace the
+#' updated structure in the first with `lset`.  Lens composition
 #' is analogous to the `.` syntax of object-oriented programming or to
 #' a flipped version of function composition.
 #'
@@ -81,90 +81,90 @@ oscope <- function(d, l = idl){
 #' @param m the second lens
 #' @examples
 #'   lst <- list(b = c(3,4,5))
-#'   lns <- index("b") %..% index(2)
-#'   lst %>% view(lns)                 # returns 4
-#'   lst %>% over(lns, 1)              # returns list(b = c(3,2,5))
+#'   lns <- index("b") %.% index(2)
+#'   lst %>% lget(lns)                 # returns 4
+#'   lst %>% lset(lns, 1)              # returns list(b = c(3,2,5))
 #'   lst                               # returns list(b = c(3,4,5))
 #' @export
-`%..%` <- function(l, m) UseMethod("%..%")
+`%.%` <- function(l, m) UseMethod("%.%")
 
-#' @method "%..%" lens 
+#' @method "%.%" lens 
 #' @export
-`%..%.lens` <- function(l, m){
+`%.%.lens` <- function(l, m){
   if(!inherits(m, "lens"))
     stop("the second argument of lens composition must be a lens")
   
-  lens(function(d) m$view(l$view(d))
-     , over = function(d, x){
-       l$over(d, m$over(l$view(d), x))
+  lens(function(d) m$lget(l$lget(d))
+     , lset = function(d, x){
+       l$lset(d, m$lset(l$lget(d), x))
        })
 }
 
-#' @method "%..%" oscope
+#' @method "%.%" oscope
 #' @export
-`%..%.oscope` <- function(l, m){
+`%.%.oscope` <- function(l, m){
   if(!inherits(m, "lens"))
     stop("the second argument of lens composition must be a lens")
 
-  oscope(l$data, l$lens %..% m)
+  oscope(l$data, l$lens %.% m)
 }
 
 #' Modify data with a lens
 #'
 #' Set the subcomponent of the data referred to by a lens
 #' with a new value. See [lens] for details.  Merely dispatches
-#' to the `over` component of the lens.
+#' to the `lset` component of the lens.
 #'
 #' @param d the data, or an [oscope]
 #' @param l the lens, or in the case of an `oscope`, the replacement
 #' @param x the replacement value, or nothing in the case of an `oscope`
 #' @export
-over <- function(d,l,x) UseMethod("over", d)
+lset <- function(d,l,x) UseMethod("lset", d)
 
-#' @method over default
+#' @method lset default
 #' @export
-over.default <- function(d, l, x){
+lset.default <- function(d, l, x){
   if(!inherits(l,"lens"))
-    stop("second argument of over must be a lens")
+    stop("second argument of lset must be a lens")
 
-  l$over(d, x)
+  l$lset(d, x)
 }
 
-#' @method over oscope
+#' @method lset oscope
 #' @export
-over.oscope <- function(d,l,x){
+lset.oscope <- function(d,l,x){
   if(!missing("x"))
-    stop("Argument `x` cannot be used with `over` and an `oscope`")
+    stop("Argument `x` cannot be used with `lset` and an `oscope`")
 
-  over(d$data, d$lens, l)
+  lset(d$data, d$lens, l)
 }
 
-#' View data with a lens
+#' Lget data with a lens
 #'
-#' View the subcomponent of the data referred to by a lens.  This function
-#' merely dispatches to the `view` component of the lens. 
+#' Lget the subcomponent of the data referred to by a lens.  This function
+#' merely dispatches to the `lget` component of the lens. 
 #'
 #' @param d the data
 #' @param l the lens
 #' @export
-view <- function(d, l) UseMethod("view")
+lget <- function(d, l) UseMethod("lget")
 
-#' @method view default
+#' @method lget default
 #' @export
-view.default <- function(d, l){
+lget.default <- function(d, l){
   if(!inherits(l, "lens"))
-    stop("view is only defined for lenses")
+    stop("lget is only defined for lenses")
 
-  l$view(d)
+  l$lget(d)
 }
 
-#' @method view oscope
+#' @method lget oscope
 #' @export
-view.oscope <- function(d, l){
+lget.oscope <- function(d, l){
   if(!missing("l"))
-    stop("Argument `l` cannot be used with `view` and an `oscope`")
+    stop("Argument `l` cannot be used with `lget` and an `oscope`")
 
-  view(d$data, d$lens)
+  lget(d$data, d$lens)
 }
 
 #' The identity (trivial lens)
@@ -181,8 +181,8 @@ idl <- lens(identity, function(., x) x)
 #' can be an `integer` or name.
 #' @export
 index <- function(el){
-  lens(view = function(d) d[[el]]
-       , over = function(d, x){
+  lens(lget = function(d) d[[el]]
+       , lset = function(d, x){
          d[[el]] <- x
          d
        })
@@ -196,8 +196,8 @@ index <- function(el){
 #' of `logical`, pointing to one or more elements of the object
 #' @export
 indexes <- function(els){
-  lens(view = function(d) d[els]
-       , over = function(d, x){
+  lens(lget = function(d) d[els]
+       , lset = function(d, x){
          d[els] <- x
          d
        })
@@ -207,22 +207,22 @@ indexes <- function(els){
 #'
 #' The lens versions of `names` and `names<-`.
 #' @export
-namel <- lens(view = names
-              , over = `names<-`)
+namel <- lens(lget = names
+              , lset = `names<-`)
 
 #' A lens into the column names of an object
 #'
 #' The lens version of `colnames` and `colnames<-`
 #' @export
-colnamesl <- lens(view = colnames
-                  , over = `colnames<-`)
+colnamesl <- lens(lget = colnames
+                  , lset = `colnames<-`)
 
 #' A lens into the row names of an object
 #'
 #' The lens version of `rownames` and `rownames<-`
 #' @export
-rownamesl <- lens(view = rownames
-                  , over = `rownames<-`)
+rownamesl <- lens(lget = rownames
+                  , lset = `rownames<-`)
 
 #' Construct a lens into an attribute
 #'
@@ -231,8 +231,8 @@ rownamesl <- lens(view = rownames
 #' the attribute to lens into.
 #' @export
 attrl <- function(attrib){
-  lens(view = function(d) attr(d, attrib)
-       , over = function(d, x) `attr<-`(d, attrib, x))
+  lens(lget = function(d) attr(d, attrib)
+       , lset = function(d, x) `attr<-`(d, attrib, x))
 }
 
 #' Environment lens
@@ -244,23 +244,23 @@ envl <- lens(environment, `environment<-`)
 
 #' Tidyselect elements by name
 #'
-#' Create a lens into a named collection to be viewed or replaced.
+#' Create a lens into a named collection to be lgeted or replaced.
 #' Names of the input are not changed. This generalizes [dplyr::select]
 #' to arbitrary named collections and allows updating.
 #' @param ... An expression to be interpretted by [tidyselect::vars_select]
 #' which is the same interpretter as [dplyr::select]
 #' @examples
 #' lets <- setNames(seq_along(LETTERS), LETTERS)
-#' over(lets, selectl(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
+#' lset(lets, selectl(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
 #' @export
 selectl <- function(...){
   dots <- rlang::quos(...)
   lens(
-    view = function(d){
+    lget = function(d){
       vars <- tidyselect::vars_select(names(d), !!!dots)
       d[vars]
     }
-  , over = function(d,x){
+  , lset = function(d,x){
     vars <- tidyselect::vars_select(names(d), !!!dots)
     d[vars] <- x
     d
@@ -274,8 +274,8 @@ selectl <- function(...){
 #' @param rows the rows to focus on
 #' @export
 rowl <- function(rows){
-  lens(view = function(d) d[rows, ,drop = FALSE]
-     , over = function(d, x){
+  lens(lget = function(d) d[rows, ,drop = FALSE]
+     , lset = function(d, x){
        d[rows, ] <- x
        d
      })
@@ -288,8 +288,8 @@ rowl <- function(rows){
 #' @param cols the columns to focus on
 #' @export
 columnl <- function(cols){
-  lens(view = function(d) d[, cols,drop = FALSE]
-     , over = function(d, x){
+  lens(lget = function(d) d[, cols,drop = FALSE]
+     , lset = function(d, x){
        d[,cols] <- x
        d
      })

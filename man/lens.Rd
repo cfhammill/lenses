@@ -4,21 +4,21 @@
 \alias{lens}
 \title{Construct a lens}
 \usage{
-lens(view, over)
+lens(lget, lset)
 }
 \arguments{
-\item{view}{A function that takes a data structure of a certain type
+\item{lget}{A function that takes a data structure of a certain type
 and returns a subpart of that structure}
 
-\item{over}{A function that takes a data structure of a certain type
+\item{lset}{A function that takes a data structure of a certain type
 and a value and returns a new data structure with the given subpart
-replaced with the given value.  Note that \code{over} should not modify
+replaced with the given value.  Note that \code{lset} should not modify
 the original data.}
 }
 \description{
 A \code{lens} represents the process of focussing on a specific part of a data structure.
-We represent this via a \code{view} function and
-an \code{over} function, roughly corresponding to object-oriented
+We represent this via a \code{lget} function and
+an \code{lset} function, roughly corresponding to object-oriented
 "getters" and "setters" respectively.
 Lenses can be composed to access or modify deeply nested
 structures.
@@ -31,9 +31,9 @@ An author of a \code{lens} (via \code{lens}) should ensure it obeys the followin
 rules (the "Lens laws", here paraphrased from
 www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial):
 \enumerate{
-\item Get-Put: If you get (view) some data with a lens, and then
-modify (over) the data with that value, you get the input data back.
-\item Put-Get: If you put (over) a value into some data with a lens,
+\item Get-Put: If you get (lget) some data with a lens, and then
+modify (lset) the data with that value, you get the input data back.
+\item Put-Get: If you put (lset) a value into some data with a lens,
 then get that value with the lens, you get back what you put in.
 \item Put-Put: If you put a value into some data with a lens, and
 then put another value with the same lens, it's the same as only
@@ -46,6 +46,6 @@ https://github.com/ekmett/lens/wiki/History-of-Lenses and
 https://julesh.com/2018/08/16/lenses-for-philosophers/ .
 }
 \examples{
-  view(1:10, index(4)) # returns 4
-  over(1:10, index(1), 10) # returns c(10, 2:10)
+  lget(1:10, index(4)) # returns 4
+  lset(1:10, index(1), 10) # returns c(10, 2:10)
 }
