@@ -417,8 +417,6 @@ filter_l <- function(...){
                    , dots
                    , rlang::expr(FALSE))
 
-  print(class(filt_expr))
-
   symbol_gatherer <-
     function(expr){
       if(is.name(expr)) return(as.character(expr))
@@ -445,3 +443,36 @@ filter_l <- function(...){
 
 
 
+#' Matrix transpose lens
+#'
+#' Lens into the transpose of a matrix
+#'
+#' @export
+t_l <-
+  lens(lget = t
+     , lset = function(d, x){
+       new_d <- t(x)
+       if(any(dim(d) != dim(new_d)))
+         stop("transposed matrix replacement in `t_l` does not have the right dimensions")
+       
+       new_d
+     })
+
+#' Lens into a list of rows
+#'
+#' A lens that creates a list-of-rows view of a `data.frame`
+#' @export
+transpose_l <-
+  lens(lget = function(d) lapply(seq_len(nrow(d)), function(i) d[i, , drop = FALSE])
+     , lset = function(d, x){
+       new_d <- Reduce(rbind, x)
+       if(any(names(new_d) != names(d)))
+         stop("Names of replacement list components in `transpose_l` don't match the "
+            , "source data")
+
+       if(any(dim(new_d) != dim(d)))
+         stop("Length of the frames in the replacement list in `transpose_l` don't match "
+            , "the source data")
+
+       new_d
+     })
