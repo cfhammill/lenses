@@ -373,13 +373,13 @@ slice_l <- function(dimension, slice, drop = FALSE){
 
 #' Filter lens
 #'
-#' Create a lens into the result of a filter. Arguments
+#' Create an illegal lens into the result of a filter. Arguments
 #' are interpreted with non-standard evaluation as in
 #' [dplyr::filter]
 #'
 #' @param ... unquoted NSE filter arguments
 #' @export
-filter_l <- function(...){
+filter_il <- function(...){
   dots <- rlang::quos(...)
   if (any(rlang::have_name(dots))) {
     stop("arguments to filter_l must not be named, do you need `==`?")
@@ -399,3 +399,49 @@ filter_l <- function(...){
          d
      })
 }
+
+#' Filter lens
+#'
+#' Create a lawful lens into the result of a filter. This
+#' focuses only columns not involved in the filter condition.
+#'
+#' @param ... unquoted NSE filter arguments
+#' @export
+filter_l <- function(...){
+  dots <- rlang::quos(...)
+  if (any(rlang::have_name(dots))) {
+    stop("arguments to filter_l must not be named, do you need `==`?")
+  }
+
+  filt_expr <- Reduce(function(acc,q){ rlang::expr(`|`(!!acc, !!q)) }
+                   , dots
+                   , rlang::expr(FALSE))
+
+  print(class(filt_expr))
+
+  symbol_gatherer <-
+    function(expr){
+      if(is.name(expr)) return(as.character(expr))
+      if(!is.call(expr)) return(NULL)
+      
+      unlist(lapply(as.list(expr), symbol_gatherer))
+    }
+
+  expr_symbols <-
+    symbol_gatherer(filt_expr) %>%
+    as.character %>%
+    gsub("`", "", .)
+
+  lens(lget = function(d){
+         filt_vec <- rlang::eval_tidy(filt_expr, d)
+         d[filt_vec, ! names(d) %in% expr_symbols ]
+       }
+     , lset = function(d,x){
+         filt_vec <- rlang::eval_tidy(filt_expr, d)
+         d[filt_vec, ! names(d) %in% expr_symbols] <- x
+         d
+     })
+}
+
+
+

@@ -10,7 +10,6 @@ filter_l(...)
 \item{...}{unquoted NSE filter arguments}
 }
 \description{
-Create a lens into the result of a filter. Arguments
-are interpreted with non-standard evaluation as in
-\link[dplyr:filter]{dplyr::filter}
+Create a lawful lens into the result of a filter. This
+focuses only columns not involved in the filter condition.
 }
