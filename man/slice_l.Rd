@@ -11,7 +11,8 @@ slice_l(dimension, slice, drop = FALSE)
 
 \item{slice}{the slice index}
 
-\item{drop}{whether or not to drop dimensions with length 1}
+\item{drop}{whether or not to drop dimensions with length 1.
+Only applies to \link{view}.}
 }
 \description{
 Create a lens into a specific slice of a specific

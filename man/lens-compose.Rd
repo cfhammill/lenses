@@ -14,17 +14,17 @@ l \%.\% m
 \description{
 Compose two lenses to produce a new lens which represents
 focussing first with the first lens, then with the second.
-A \code{lget} using the resulting composite lens will first \code{lget} using
-the first, then the second, while an \code{lset} will \code{lget} via the first lens,
-\code{lset} into the resulting piece with the second, and then replace the
-updated structure in the first with \code{lset}.  Lens composition
+A \code{view} using the resulting composite lens will first \code{view} using
+the first, then the second, while an \code{set} will \code{view} via the first lens,
+\code{set} into the resulting piece with the second, and then replace the
+updated structure in the first with \code{set}.  Lens composition
 is analogous to the \code{.} syntax of object-oriented programming or to
 a flipped version of function composition.
 }
 \examples{
   lst <- list(b = c(3,4,5))
   lns <- index_l("b") \%.\% index_l(2)
-  lst \%>\% lget(lns)                 # returns 4
-  lst \%>\% lset(lns, 1)              # returns list(b = c(3,2,5))
+  lst \%>\% view(lns)                 # returns 4
+  lst \%>\% set(lns, 1)              # returns list(b = c(3,2,5))
   lst                               # returns list(b = c(3,4,5))
 }

@@ -11,11 +11,11 @@ select_l(...)
 which is the same interpreter as \link[dplyr:select]{dplyr::select}}
 }
 \description{
-Create a lens into a named collection. On \link{lset}
+Create a lens into a named collection. On \link{set}
 names of the input are not changed. This generalizes \link[dplyr:select]{dplyr::select}
 to arbitrary named collections and allows updating.
 }
 \examples{
 lets <- setNames(seq_along(LETTERS), LETTERS)
-lset(lets, select_l(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
+set(lets, select_l(G:F, A, B), 1:4) # A and B are 3,4 for a quick check
 }
