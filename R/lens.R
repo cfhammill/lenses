@@ -530,3 +530,66 @@ substr_l <- function(first, last){
     d
   })
 }
+
+#' Lens into the diagonal of a matrix
+#'
+#' A lens into a matrix's diagonal elements
+#' @export
+diag_l <-
+  lens(view = diag
+     , set = `diag<-`)
+
+#' Lens into lower diagonal elements
+#'
+#' Create a lens into the lower diagonal elements
+#' of a matrix
+#' @param diag whether or not to include the diagonal
+#' @export
+lower_tri_l <-
+  function(diag = FALSE){
+    lens(
+      view = function(d) d[lower.tri(d, diag = diag)]
+    , set = function(d, x){
+      d[lower.tri(d, diag = diag)] <- x
+      d
+    })
+  }
+
+#' Lens into upper diagonal elements
+#'
+#' Create a lens into the upper diagonal elements
+#' of a matrix
+#' @param diag whether or not to include the diagonal
+#' @export
+upper_tri_l <-
+  function(diag = FALSE){
+    lens(
+      view = function(d) d[upper.tri(d, diag = diag)]
+    , set = function(d, x){
+      d[upper.tri(d, diag = diag)] <- x
+      d
+    })
+  }
+
+#' Lens into a symmetric view of a matrix
+#'
+#' Create a lens into a symmetric view of a matrix
+#'
+#' @param diag whether or not to include the diagonal
+#' @param tri which triangle to view
+#' @export
+sym_l <-
+  function(diag = FALSE, tri = c("lower", "upper")){
+    tri <-
+      switch(match.arg(tri)
+           , lower = c(lower.tri, upper.tri)
+           , upper = c(upper.tri, lower.tri))
+
+    lens(
+      view = function(d) d[tri[[1]](d, diag = diag)]
+    , set = function(d, x){
+      d[tri[[1]](d, diag = diag)] <- x
+      d[tri[[2]](d, diag = diag)] <- x
+      d
+    })
+  }
