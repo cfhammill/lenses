@@ -91,7 +91,7 @@ underlying data-set is never changed, so you get complete control of
 when, if ever, you mutate the raw data. Now if all lenses had to
 offer was more composable indexing, you might not be interested in
 integrating them into your workflows. But lenses can do a lot more
-than just pick and set elements in vectors.
+than just pick and set elements in vectors. 
 
 ## More interesting lenses.
 
