@@ -16,9 +16,8 @@
 #' @details Lenses are popular in functional programming because
 #' they allow you to build pure, compositional, and re-usable "getters" and "setters".
 #'
-#' An author of a `lens` (via `lens`) should ensure it obeys the following
-#' rules (the "Lens laws", here paraphrased from
-#' www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial):
+#' As noted in the README, using `lens` directly incurs the following obligations
+#' (the "Lens laws"):
 #'
 #' 1. Get-Put: If you get (view) some data with a lens, and then
 #' modify (set) the data with that value, you get the input data back.
@@ -28,10 +27,8 @@
 #' then put another value with the same lens, it's the same as only
 #' doing the second put.
 #'
-#' There is nothing particularly new about the lenses appearing here.
-#' For a fairly comprehensive (and rather technical) history of lenses, see
-#' https://github.com/ekmett/lens/wiki/History-of-Lenses and
-#' https://julesh.com/2018/08/16/lenses-for-philosophers/ .
+#' "Lenses" which do not satisfy these properties should be documented accordingly.
+#' By convention, such objects present in this library are suffixed by "_il" ("illegal lens").
 #'
 #' @examples
 #'   view(1:10, index_l(4)) # returns 4
