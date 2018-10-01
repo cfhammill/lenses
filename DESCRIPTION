@@ -9,6 +9,8 @@ LazyData: true
 ByteCompile: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
+URL: http://cfhammill.github.io/lenses, https://github.com/cfhammill/lenses
+BugReports: https://github.com/cfhammill/lenses/issues
 Suggests: 
     testthat
 Imports: 
