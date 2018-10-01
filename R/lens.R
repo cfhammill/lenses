@@ -1,3 +1,5 @@
+globalVariables(".", "lenses")
+
 #' Construct a lens
 #'
 #' A `lens` represents the process of focussing on a specific part of a data structure.

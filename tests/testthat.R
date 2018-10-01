@@ -1,4 +1,4 @@
 library(testthat)
-library(focal)
+library(lenses)
 
-test_check("focal")
+test_check("lenses")
