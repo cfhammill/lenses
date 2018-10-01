@@ -16,5 +16,5 @@ applies to \code{view}}
 }
 \description{
 Create a lens into a chunk of an array (hyperslab). Uses
-the same syntactic rules as \code{[}
+the same syntactic rules as \code{[}.
 }

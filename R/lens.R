@@ -382,7 +382,7 @@ slice_l <- function(dimension, slice, drop = FALSE){
 #' Slab lens
 #'
 #' Create a lens into a chunk of an array (hyperslab). Uses
-#' the same syntactic rules as `[`
+#' the same syntactic rules as `[`.
 #'
 #' @param ... arguments as they would be passed `[` e.g. `x[3,5,7]`
 #' @param drop whether or not to drop dimensions with length 1. Only
@@ -571,25 +571,24 @@ upper_tri_l <-
     })
   }
 
-#' Lens into a symmetric view of a matrix
+#' Set one lens to the view of another
 #'
-#' Create a lens into a symmetric view of a matrix
-#'
-#' @param diag whether or not to include the diagonal
-#' @param tri which triangle to view
+#' @param d the data
+#' @param l the lens to view through
+#' @param m the lens to set into
 #' @export
-sym_l <-
-  function(diag = FALSE, tri = c("lower", "upper")){
-    tri <-
-      switch(match.arg(tri)
-           , lower = c(lower.tri, upper.tri)
-           , upper = c(upper.tri, lower.tri))
+send <- function(d, l, m){
+  m$set(d, l$view(d))
+}
 
-    lens(
-      view = function(d) d[tri[[1]](d, diag = diag)]
-    , set = function(d, x){
-      d[tri[[1]](d, diag = diag)] <- x
-      d[tri[[2]](d, diag = diag)] <- x
-      d
-    })
-  }
+#' Set one lens to the view of another (transformed)
+#'
+#' @param d the data
+#' @param f the function to apply to the viewed data
+#' @param l the lens to view through
+#' @param m the lens to set into
+#' @export
+send_over <- function(d, f, l, m){
+  m$set(d, f(l$view(d)))
+}
+
