@@ -7,7 +7,7 @@ Installation
 ------------
 
 ``` r
-devtools::install_github("cfhammill/focal")
+devtools::install_github("cfhammill/lenses")
 ```
 
 Intro
@@ -16,6 +16,17 @@ Intro
 In typical R use we frequently perform two common operations on our data. We `view` some piece of the data, or we `set` some piece of the data. Base R comes with many pairs of `view` and `set` functions. For example let's take the iris data set
 
 ``` r
+library(lenses)
+library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
+
 head(iris)
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 #> 1          5.1         3.5          1.4         0.2  setosa
