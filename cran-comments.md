@@ -6,4 +6,4 @@ issues with the previous upload I have:
 
 - Improved the title
 - Elaborated on the purpose and use of lenses
-
+- Dramatically improved the README
