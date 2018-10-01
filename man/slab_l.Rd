@@ -7,12 +7,10 @@
 slab_l(..., drop = FALSE)
 }
 \arguments{
-\item{...}{arguments as they would be passed \code{[} e.g. \code{x[3,5,7]}
-
-[\code{e.g.}x[3,5,7]: R:%60%20e.g.%20%60x[3,5,7}
+\item{...}{arguments as they would be passed to \code{[} for example \code{x[3,5,7]}.}
 
 \item{drop}{whether or not to drop dimensions with length 1. Only
-applies to \code{view}}
+applies to \code{view}.}
 }
 \description{
 Create a lens into a chunk of an array (hyperslab). Uses

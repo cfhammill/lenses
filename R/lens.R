@@ -376,14 +376,12 @@ slice_l <- function(dimension, slice, drop = FALSE){
   lens(view = getter, set = setter)
 }
 
-#' Slab lens
-#'
-#' Create a lens into a chunk of an array (hyperslab). Uses
+#' @title Slab lens
+#' @description Create a lens into a chunk of an array (hyperslab). Uses
 #' the same syntactic rules as `[`.
-#'
-#' @param ... arguments as they would be passed `[` e.g. `x[3,5,7]`
+#' @param ... arguments as they would be passed to \code{[} for example `x[3,5,7]`.
 #' @param drop whether or not to drop dimensions with length 1. Only
-#' applies to `view`
+#' applies to `view`.
 #' @export
 slab_l <- function(..., drop = FALSE){
   lens(view = function(d) d[..., drop = drop]
