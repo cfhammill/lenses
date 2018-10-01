@@ -16,7 +16,7 @@ library(focal)
 library(dplyr)
 ```
 
-# Focal: Lenses for R
+# Lenses for R
 
 ## Installation
 
