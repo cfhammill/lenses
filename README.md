@@ -20,7 +20,7 @@ head(iris)
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 #> 1          5.1         3.5          1.4         0.2  setosa
 #> 2          4.9         3.0          1.4         0.2  setosa
-#> 3          4.7         3.2          1.3         0.2  setosa
+#> 3         20.0         3.2          1.3         0.2  setosa
 #> 4          4.6         3.1          1.5         0.2  setosa
 #> 5          5.0         3.6          1.4         0.2  setosa
 #> 6          5.4         3.9          1.7         0.4  setosa
@@ -30,7 +30,7 @@ and we'll `view` the 3rd element of the `Sepal.Length` column.
 
 ``` r
 iris$Sepal.Length[3]
-#> [1] 4.7
+#> [1] 20
 ```
 
 we can equivalently set the same element to a new value
@@ -141,7 +141,32 @@ iris %>%
 
 As you can see lenses can be smoothly integrated into your `tidyverse` workflows, or your base R workflows.
 
+Polishing your own
+------------------
+
+You can make a lens from scratch (!) by passing `view` and `set` functions to the `lens` constructor:
+
+``` r
+first_l <- lens(view = function(d) d[[1]],
+                set  = function(d, x) { d[[1]] <- x; d })
+```
+
+As you see, the `view` function must accept an element of data, while the `set` function must accepts such an element as well as the new value of the subpart, and return the new data in its entirety - thus achieving composability - without modifying the original.
+
+In order to avoid unpleasant surprises or inconsistencies for users, an author of a `lens` (via `lens`) should ensure it obeys the following rules (the "Lenz laws", here paraphrased from [a Haskell lens tutorial](www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial)):
+
+1.  Get-Put: If you get (view) some data with a lens, and then modify (set) the data with that value, you get the input data back.
+2.  Put-Get: If you put (set) a value into some data with a lens, then get that value with the lens, you get back what you put in.
+3.  Put-Put: If you put a value into some data with a lens, and then put another value with the same lens, it's the same as only doing the second put.
+
+"Lenses" which do not satisfy these properties should be documented accordingly. By convention, the few such specimens in this library are suffixed by "\_il" ("illegal lens").
+
 How do they work?
 -----------------
 
-Next step, explain the madness.
+As you can see from the `lens` constructor, knowing how to implement `view` and `set` for a lens turns out to be sufficient to implement the other verbs such as `over` and - most importantly - lens composition (`%.%`). In fact, our implementation of `lens` is trivial: it simply stores the provided functions.
+
+History of lens making
+----------------------
+
+There is nothing particularly new about the lenses appearing here. For a fairly comprehensive (and highly technical) history of lenses, see [links here](https://github.com/ekmett/lens/wiki/History-of-Lenses) and [this blog post](https://julesh.com/2018/08/16/lenses-for-philosophers/) .
