@@ -1,5 +1,3 @@
-globalVariables(".", "lenses")
-
 #' Construct a lens
 #'
 #' A `lens` represents the process of focussing on a specific part of a data structure.
@@ -184,7 +182,7 @@ over <- function(d, l, f) UseMethod("over")
 #' @method over default
 #' @export
 over.default <- function(d, l, f){
-  f <- as_closure(f, lambda = TRUE)
+  f <- as_closure(f)
   set(d, l, f(view(d, l)))
 }
 
@@ -580,7 +578,7 @@ send <- function(d, l, m){
 #' @param m the lens to set into
 #' @export
 send_over <- function(d, f, l, m){
-  f <- as_closure(f, lambda = TRUE)
+  f <- as_closure(f)
   m$set(d, f(l$view(d)))
 }
 
