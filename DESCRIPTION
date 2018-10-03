@@ -17,3 +17,7 @@ Imports:
     magrittr,
     tidyselect,
     rlang
+Collate: 
+    'utils.R'
+    'lens.R'
+    'utils-pipe.R'

@@ -184,6 +184,7 @@ over <- function(d, l, f) UseMethod("over")
 #' @method over default
 #' @export
 over.default <- function(d, l, f){
+  f <- as_closure(f, lambda = TRUE)
   set(d, l, f(view(d, l)))
 }
 
@@ -401,7 +402,7 @@ slab_l <- function(..., drop = FALSE){
 filter_il <- function(...){
   dots <- rlang::quos(...)
   if (any(rlang::have_name(dots))) {
-    stop("arguments to filter_l must not be named, do you need `==`?")
+    stop("arguments to filter_il must not be named, do you need `==`?")
   }
 
   filt_quo <- Reduce(function(acc,q){ rlang::expr(`|`(!!acc, !!q)) }
@@ -425,6 +426,7 @@ filter_il <- function(...){
 #' focuses only columns not involved in the filter condition.
 #'
 #' @param ... unquoted NSE filter arguments
+#' @include utils.R
 #' @export
 filter_l <- function(...){
   dots <- rlang::quos(...)
@@ -435,14 +437,6 @@ filter_l <- function(...){
   filt_expr <- Reduce(function(acc,q){ rlang::expr(`|`(!!acc, !!q)) }
                    , dots
                    , rlang::expr(FALSE))
-
-  symbol_gatherer <-
-    function(expr){
-      if(is.name(expr)) return(as.character(expr))
-      if(!is.call(expr)) return(NULL)
-      
-      unlist(lapply(as.list(expr), symbol_gatherer))
-    }
 
   expr_symbols <-
     symbol_gatherer(filt_expr) %>%
@@ -586,6 +580,7 @@ send <- function(d, l, m){
 #' @param m the lens to set into
 #' @export
 send_over <- function(d, f, l, m){
+  f <- as_closure(f, lambda = TRUE)
   m$set(d, f(l$view(d)))
 }
 
