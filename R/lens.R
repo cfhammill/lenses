@@ -582,3 +582,24 @@ send_over <- function(d, f, l, m){
   m$set(d, f(l$view(d)))
 }
 
+#' Promote a lens to apply to each element of a list
+#'
+#' Create a new lens that views and sets each element
+#' of the list.
+#'
+#' @param l the lens to promote
+#' @details Uses [lapply] under the hood for [view]
+#' and [mapply] under the hood for [set]. This means
+#' that [set] can be given a list of values to set,
+#' one for each element. 
+#' @examples
+#' (ex <- replicate(10, sample(1:5), simplify = FALSE))
+#' view(ex, map_l(index(1)))
+#' set(ex, map_l(index(1)), 11:20)
+#' @export
+map_l <- function(l){
+  lens(view = function(d) lapply(d, view, l)
+     , set = function(d, x){
+       mapply(set, d, x, MoreArgs = list(l = l), SIMPLIFY = FALSE) 
+     })
+}
