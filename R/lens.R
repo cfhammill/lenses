@@ -246,8 +246,8 @@ indexes <- indexes_l
 #' @param slot the name of the slot
 #' @export
 slot_l <- function(slot){
-  lens(view = function(d) `@`(d, slot)
-     , set = function(d, x) `@<-`(d, slot, x))
+  lens(view = function(d) eval(bquote(`@`(d, .(slot))))
+     , set = function(d, x) eval(bquote(`@<-`(d, .(slot), x))))
 }
 
 #' A lens into the names of an object
@@ -614,3 +614,69 @@ map_l <- function(l){
        mapply(set, d, x, MoreArgs = list(l = l), SIMPLIFY = FALSE) 
      })
 }
+
+#' Attributes lens
+#'
+#' The lens equivalent of [attributes] and [attributes<-]
+#' @export
+attributes_l <-
+  lens(view = attributes
+     , set = `attributes<-`)
+
+#' Body lens
+#'
+#' A lens into the body of a function. The
+#' lens equivalent of [body] and [body<-].
+#' You probably shouldn't use this.
+#' @examples
+#' inc2 <- function(x) x + 2
+#' view(inc2, body_l)
+#' inc4 <- set(inc2, body_l, quote(x + 4))
+#' inc4(10)
+#' @export
+body_l <-
+  lens(view = body
+     , set = function(d, x){
+       `body<-`(d, value = x)
+     })
+
+#' Formals lens
+#'
+#' A lens equivalent of [formals] and [formals<-],
+#' allowing you to change the formal arguments of
+#' a function. As with [body_l] you probably shouldn't
+#' use this.
+#' @export
+formals_l <-
+  lens(view = formals
+     , set = function(d, x){
+       `formals<-`(d, value = x)
+     })
+
+#' Class lens
+#'
+#' A lens into the class of an object. Lens
+#' equivalent of [class] and [class<-].
+#' @export
+class_l <-
+  lens(view = class
+     , set = `class<-`)
+
+#' Dimnames lens
+#'
+#' A lens into the dimnames of an object. Lens
+#' equivalent of [dimnames] and [dimnames<-].
+#' @export
+dimnames_l <-
+  lens(view = dimnames
+     , set = `dimnames<-`)
+
+#' Levels lens
+#'
+#' A lens into the levels of an object. Usually
+#' this is factor levels. Lens
+#' equivalent of [levels] and [levels<-].
+#' @export
+levels_l <-
+  lens(view = levels
+     , set = `levels<-`)
