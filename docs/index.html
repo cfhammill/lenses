@@ -79,12 +79,14 @@
 <div id="intro" class="section level2">
 <h2 class="hasAnchor">
 <a href="#intro" class="anchor"></a>Intro</h2>
-<p>In typical R use we frequently perform two common operations on our data. We <code>view</code> some piece of the data, or we <code>set</code> some piece of the data. Base R comes with many pairs of <code>view</code> and <code>set</code> functions. A classic example would be <code>names</code>. Names can be viewed <code>names(x)</code> and set <code>names(x) &lt;- new_names</code>. Lenses take this idea and offer some important advantages:</p>
+<p>When programming in R there are two fundamental operations we perform on our data. We <code>view</code> some piece of the data, or we <code>set</code> some piece of the data to a particular value. These two operations are so fundamental that R comes with many pairs of <code>view</code> and <code>set</code> functions. A classic example would be <code>names</code>. Names can be viewed <code>names(x)</code> and set <code>names(x) &lt;- new_names</code>. Lenses are an extension of the idea of <code>view</code>/<code>set</code> pairs, offering the following advantages:</p>
 <ul>
-<li>bidirectionality (you can <code>set</code> anything you can <code>view</code>)</li>
-<li>composability (lenses can be put together to <code>set</code>/<code>view</code> nested data)</li>
-<li>reduces code duplication</li>
-<li>non-destructive (lenses won’t update your data without your permission)</li>
+<li>lenses are bidirectional (you can <code>set</code> anything you can <code>view</code>)</li>
+<li>they are composable (they can be put together to <code>set</code>/<code>view</code> nested data)</li>
+<li>they reduce code duplication</li>
+<li>they play well with piping - <a href="http://r4ds.had.co.nz/pipes.html">see R4DS to learn more about piping</a>
+</li>
+<li>and they are non-destructive (lenses won’t update your data without your permission)</li>
 </ul>
 <p>In this document, we’ll see a few common data manipulation operations and how they can be improved with lenses.</p>
 </div>
@@ -92,10 +94,7 @@
 <h2 class="hasAnchor">
 <a href="#simple-manipulations" class="anchor"></a>Simple manipulations</h2>
 <p>Let’s take the iris data set for example, we want to perform some manipulations on it.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lenses)
-<span class="kw">library</span>(dplyr)
-
-<span class="kw">head</span>(iris)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(iris)
 <span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
 <span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
 <span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
@@ -116,7 +115,7 @@
 <p>and we can perform some operation to update it:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris$Sepal.Length[<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">log</span>(iris$Sepal.Length[<span class="dv">3</span>])</code></pre></div>
 <p>This works well, however, there are some problems.</p>
-<p>The first problem is comes with having our <code>view</code> and <code>set</code> functions separate. Composing our operations isn’t easy, particularly when using pipes:</p>
+<p>The first problem comes with having our <code>view</code> and <code>set</code> functions separate. Composing our operations isn’t easy, particularly when using pipes:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
 <span class="st">  </span>.$Sepal.Length %&gt;%
 <span class="st">  `</span><span class="dt">[&lt;-</span><span class="st">`</span>(<span class="dv">20</span>)
@@ -128,9 +127,18 @@
 <span class="co">#&gt; [116] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
 <span class="co">#&gt; [139] 20 20 20 20 20 20 20 20 20 20 20 20</span></code></pre></div>
 <p>Whoops, that’s not what we wanted.</p>
-<p>R’s <code>set</code>/<code>view</code> pairs also can’t be composed with function compostion e.g. <code><a href="http://www.rdocumentation.org/packages/purrr/topics/compose">purrr::compose</a></code>.</p>
+<p>R’s <code>set</code>/<code>view</code> pairs also can’t be composed with function compostion:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="st">`</span><span class="dt">[&lt;-</span><span class="st">`</span>(<span class="st">`</span><span class="dt">$</span><span class="st">`</span>(iris, <span class="st">`</span><span class="dt">Sepal.Length</span><span class="st">`</span>), <span class="dv">20</span>)
+<span class="co">#&gt;   [1] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
+<span class="co">#&gt;  [24] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
+<span class="co">#&gt;  [47] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
+<span class="co">#&gt;  [70] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
+<span class="co">#&gt;  [93] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
+<span class="co">#&gt; [116] 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20</span>
+<span class="co">#&gt; [139] 20 20 20 20 20 20 20 20 20 20 20 20</span></code></pre></div>
+<p>still not what we want.</p>
 <p>This is a failure of “bidirectionality”, once you’ve chosen to use a <code>view</code> function, or a <code>set</code> function, you are locked into that direction.</p>
-<p>Lack of composability and bidirectionality means that you frequently have to duplicate your code. For example, if you want to apply an operation to the third element of “Sepal.Length”, you need to specify the chain of accessors twice, once in <code>view</code> mode, and once in <code>set</code> mode.</p>
+<p>Lack of composability and bidirectionality means that you frequently have to duplicate your code. For example, if you want to apply an operation to the third element of “Sepal.Length”, you need to specify the chain of accessors twice, once in <code>view</code> mode, and once in <code>set</code> mode, making your code messy and cumbersome:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris$Sepal.Length[<span class="dv">3</span>] &lt;-<span class="st"> </span>iris$Sepal.Length[<span class="dv">3</span>] *<span class="st"> </span><span class="dv">2</span>
 <span class="kw">head</span>(iris, <span class="dv">3</span>)
 <span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
@@ -142,13 +150,15 @@
 <div id="using-lenses" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-lenses" class="anchor"></a>Using lenses</h2>
-<p>Lenses give you all the power of R’s <code>view</code> and <code>set</code> functions plus the advantages noted above. Especially important are the composition and bidirectionality features. Each lens can be used with our <a href="https://cfhammill.github.io/lenses/reference/view.html"><code>view</code></a>, and <a href="https://cfhammill.github.io/lenses/reference/set.html"><code>set</code></a>.</p>
+<p>Lenses give you all the power of R’s <code>view</code> and <code>set</code> functions plus the advantages noted above. Especially important are the composition and bidirectionality features. Each lens can be used with its <a href="https://cfhammill.github.io/lenses/reference/view.html"><code>view</code></a>, and <a href="https://cfhammill.github.io/lenses/reference/set.html"><code>set</code></a> functions.</p>
 <p>Let’s revisit the operations we performed above using lenses.</p>
 <p>The first thing we will do is construct a lens into the third element of <code>Sepal.Length</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sepal_length3 &lt;-<span class="st"> </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="st">"Sepal.Length"</span>) %.%<span class="st"> </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="dv">3</span>)</code></pre></div>
-<p>In the code above we’re first creating a two lenses, one into <code>Sepal.Length</code> and another into element 3 using the <a href="https://cfhammill.github.io/lenses/reference/set.html"><code>index</code></a> function. Then we’re composing these two lenses with <a href="https://cfhammill.github.io/lenses/reference/lens-compose.html"><code>%.%</code></a>.</p>
-<p>Note that this lens has no idea we’re going to apply it to <code>iris</code>. Lenses are constructed without view of the data.</p>
-<p>Now that we have a lens into an the third element of <code>Sepal.Length</code>, we can examine the element with the <a href="https://cfhammill.github.io/lenses/reference/view.html"><code>view</code></a> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lenses)
+
+sepal_length3 &lt;-<span class="st"> </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="st">"Sepal.Length"</span>) %.%<span class="st"> </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="dv">3</span>)</code></pre></div>
+<p>In the above code we’re creating two lenses, one into <code>Sepal.Length</code> and another into element 3, using the <a href="https://cfhammill.github.io/lenses/reference/set.html"><code>index</code></a> function. We’re then composing these two lenses with <a href="https://cfhammill.github.io/lenses/reference/lens-compose.html"><code>%.%</code></a> producing a new lens into our element of interest.</p>
+<p>Note that this lens has no idea we’re going to apply it to <code>iris</code>. Lenses are constructed without knowing what data they will be applied to.</p>
+<p>Now that we have a lens into the third element of <code>Sepal.Length</code>, we can examine that element with the <a href="https://cfhammill.github.io/lenses/reference/view.html"><code>view</code></a> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%<span class="st"> </span><span class="kw"><a href="reference/view.html">view</a></span>(sepal_length3)
 <span class="co">#&gt; [1] 9.21034</span></code></pre></div>
 <p>We can update this element with the <a href="https://cfhammill.github.io/lenses/reference/set.html"><code>set</code></a> function:</p>
@@ -192,9 +202,20 @@
 <span class="co">#&gt; 2      4.90000        13.0         11.4        10.2  setosa</span>
 <span class="co">#&gt; 3      9.21034        13.2         11.3        10.2  setosa</span></code></pre></div>
 <p>Not only does <a href="https://cfhammill.github.io/lenses/reference/select_l.html"><code>select_l</code></a> create the appropriate lens for you with <code><a href="http://dplyr.tidyverse.org/reference/select.html">dplyr::select</a></code> style column references, but <a href="https://cfhammill.github.io/lenses/reference/over.html"><code>over</code></a> allows us to declare anonymous functions like in <code>purrr</code>.</p>
-<p>At this point I can imagine you saying, all this is very clear, but what good is it, I have <code>mutate</code>, well that is certainly true. But have you ever wanted to <code>set</code> or modify the results of a <code>filter</code>? This is not super easy to do in the <code>dplyr</code> universe. But our lens-ified <code>filter</code>, <a href="https://cfhammill.github.io/lenses/reference/filter_l.html"><code>filter_l</code></a> does this with ease.</p>
-<p>Let’s set all “sepal” columns where the row number is less than three to zero. And for fun let’s also change the column names to all upper case:</p>
+<p>At this point I can imagine you saying, all this is very clear, but what good is it, I have <code>mutate</code>. Well that is a good point. It is hard to beat the convenience of <code>mutate</code>. However, <code>select_l</code> has an advantage, it can be used on any named object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
+<span class="st">  </span>as.list %&gt;%
+<span class="st">  </span><span class="kw"><a href="reference/view.html">view</a></span>(<span class="kw"><a href="reference/select_l.html">select_l</a></span>(<span class="kw">matches</span>(<span class="st">"Sepal"</span>)) %.%
+<span class="st">       </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="dv">1</span>) %.%
+<span class="st">       </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="dv">1</span>)
+       ) 
+<span class="co">#&gt; [1] 5.1</span></code></pre></div>
+<p>You can use it with vectors, lists, data.frames, etc.</p>
+<p>If <code>select_l</code> isn’t enticing enough, have you ever wanted to <code>set</code> or modify the results of a <code>filter</code>? This is not super easy to do in the <code>dplyr</code> universe. But our lens-ified <code>filter</code>, <a href="https://cfhammill.github.io/lenses/reference/filter_l.html"><code>filter_l</code></a> does this with ease.</p>
+<p>Let’s set all “Sepal” columns where the row number is less than three to zero. And for fun let’s also change the column names to all upper case:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+
+iris %&gt;%
 <span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">row_num =</span> <span class="kw">seq_len</span>(<span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>())) %&gt;%
 <span class="st">  </span><span class="kw"><a href="reference/set.html">set</a></span>(<span class="kw"><a href="reference/filter_l.html">filter_l</a></span>(row_num &lt;<span class="st"> </span><span class="dv">3</span>) %.%
 <span class="st">      </span><span class="kw"><a href="reference/select_l.html">select_l</a></span>(<span class="kw"><a href="http://dplyr.tidyverse.org/reference/reexports.html">matches</a></span>(<span class="st">"Sepal"</span>))
@@ -205,7 +226,65 @@
 <span class="co">#&gt; 1      0.00000         0.0          1.4         0.2  setosa       1</span>
 <span class="co">#&gt; 2      0.00000         0.0          1.4         0.2  setosa       2</span>
 <span class="co">#&gt; 3      9.21034         3.2          1.3         0.2  setosa       3</span></code></pre></div>
+<p>You can even use mutate <code>over</code> your <code>filter_l</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
+<span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">row_num =</span> <span class="kw">seq_len</span>(<span class="kw"><a href="http://dplyr.tidyverse.org/reference/n.html">n</a></span>())) %&gt;%
+<span class="st">  </span><span class="kw"><a href="reference/over.html">over</a></span>(<span class="kw"><a href="reference/filter_l.html">filter_l</a></span>(row_num &lt;<span class="st"> </span><span class="dv">3</span>)
+     , ~<span class="st"> </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(., <span class="dt">Sepal.Length =</span> <span class="dv">0</span>)) %&gt;%
+<span class="st">  </span><span class="kw">head</span>(<span class="dv">3</span>)
+<span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species row_num</span>
+<span class="co">#&gt; 1      0.00000         3.5          1.4         0.2  setosa       1</span>
+<span class="co">#&gt; 2      0.00000         3.0          1.4         0.2  setosa       2</span>
+<span class="co">#&gt; 3      9.21034         3.2          1.3         0.2  setosa       3</span></code></pre></div>
 <p>As you can see, lenses can be smoothly integrated into your <code>tidyverse</code> workflows, as well as your base R workflows. Giving you the powers of compositionality and bidirectionality to improve your code.</p>
+</div>
+<div id="mapping-lenses" class="section level2">
+<h2 class="hasAnchor">
+<a href="#mapping-lenses" class="anchor"></a>Mapping lenses</h2>
+<p>Frequently we end up in situations where we want to modify each element of a nested object. This is especially cumbersome without lenses. Let’s imagine our data lives inside a larger structure. And additionally that it isn’t a nice data frame, but a list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">packed_iris &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">as.list</span>(iris))
+
+packed_iris %&gt;%<span class="st"> </span><span class="kw">str</span>(<span class="dv">2</span>)
+<span class="co">#&gt; List of 1</span>
+<span class="co">#&gt;  $ :List of 5</span>
+<span class="co">#&gt;   ..$ Sepal.Length: num [1:150] 5.1 4.9 9.21 4.6 5 ...</span>
+<span class="co">#&gt;   ..$ Sepal.Width : num [1:150] 3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...</span>
+<span class="co">#&gt;   ..$ Petal.Length: num [1:150] 1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...</span>
+<span class="co">#&gt;   ..$ Petal.Width : num [1:150] 0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...</span>
+<span class="co">#&gt;   ..$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...</span></code></pre></div>
+<p>say I want to add 10 to the first element of each column between <code>Sepal.Length</code> and <code>Petal.Width</code>. Base R I might do something like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">els_of_interest &lt;-
+<span class="st">  </span><span class="kw">grep</span>(<span class="st">"Sepal|Petal"</span>, <span class="kw">names</span>(packed_iris[[<span class="dv">1</span>]]), <span class="dt">value =</span> <span class="ot">TRUE</span>)
+
+packed_iris[[<span class="dv">1</span>]][<span class="dv">1</span>:<span class="dv">4</span>] &lt;-
+<span class="st">  </span><span class="kw">lapply</span>(packed_iris[[<span class="dv">1</span>]][<span class="dv">1</span>:<span class="dv">4</span>]
+       , function(x){ x[<span class="dv">1</span>] &lt;-<span class="st"> </span>x[<span class="dv">1</span>] +<span class="st"> </span><span class="dv">10</span>; x })
+
+<span class="kw">str</span>(packed_iris, <span class="dv">2</span>)
+<span class="co">#&gt; List of 1</span>
+<span class="co">#&gt;  $ :List of 5</span>
+<span class="co">#&gt;   ..$ Sepal.Length: num [1:150] 15.1 4.9 9.21 4.6 5 ...</span>
+<span class="co">#&gt;   ..$ Sepal.Width : num [1:150] 13.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...</span>
+<span class="co">#&gt;   ..$ Petal.Length: num [1:150] 11.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...</span>
+<span class="co">#&gt;   ..$ Petal.Width : num [1:150] 10.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...</span>
+<span class="co">#&gt;   ..$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...</span></code></pre></div>
+<p>pretty ugly right?</p>
+<p>To do this with lenses we can use the <code>map_l</code> function to promote a <code>lens</code> to apply to each element of a list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">els_l &lt;-
+<span class="st">  </span><span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="dv">1</span>) %.%
+<span class="st">  </span><span class="kw"><a href="reference/select_l.html">select_l</a></span>(Sepal.Length:Petal.Width) %.%
+<span class="st">  </span><span class="kw"><a href="reference/map_l.html">map_l</a></span>(<span class="kw"><a href="reference/index_l.html">index</a></span>(<span class="dv">1</span>))
+
+<span class="kw"><a href="reference/map_over.html">map_over</a></span>(packed_iris, els_l, ~<span class="st"> </span>. +<span class="st"> </span><span class="dv">10</span>) %&gt;%
+<span class="st">  </span><span class="kw">str</span>(<span class="dv">2</span>)
+<span class="co">#&gt; List of 1</span>
+<span class="co">#&gt;  $ :List of 5</span>
+<span class="co">#&gt;   ..$ Sepal.Length: num [1:150] 25.1 4.9 9.21 4.6 5 ...</span>
+<span class="co">#&gt;   ..$ Sepal.Width : num [1:150] 23.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...</span>
+<span class="co">#&gt;   ..$ Petal.Length: num [1:150] 21.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...</span>
+<span class="co">#&gt;   ..$ Petal.Width : num [1:150] 20.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...</span>
+<span class="co">#&gt;   ..$ Species     : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...</span></code></pre></div>
+<p>Here we use the <code>map_over</code> function to apply a function to each element, you could equivalently use <code>over</code> with <code>lapply</code> as well. As you can see setting and applying functions to multiple elements of nested data is dramatically improved by using lenses.</p>
 </div>
 <div id="polishing-your-own" class="section level2">
 <h2 class="hasAnchor">
@@ -213,25 +292,27 @@
 <p>You can make a lens from scratch (!) by passing <code>view</code> and <code>set</code> functions to the <a href="https://cfhammill.github.io/lenses/reference/lens.html"><code>lens</code></a> constructor:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">first_l &lt;-<span class="st"> </span><span class="kw"><a href="reference/lens.html">lens</a></span>(<span class="dt">view =</span> function(d) d[[<span class="dv">1</span>]],
                 <span class="dt">set  =</span> function(d, x) { d[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>x; d })</code></pre></div>
-<p>As you see, the <code>view</code> function must accept an element of data, while the <code>set</code> function must accepts such an element as well as the new value of the subpart, and return the new data in its entirety - thus achieving composability - without modifying the original.</p>
+<p>As you can see, the <code>view</code> function must accept an element of data, while the <code>set</code> function must accept such an element as well as the new value of the subpart, and return the new data in its entirety - thus achieving composability - without modifying the original.</p>
 <p>In order to avoid unpleasant surprises or inconsistencies for users, an author of a <code>lens</code> (via <a href="https://cfhammill.github.io/lenses/reference/lens.html"><code>lens</code></a>) should ensure it obeys the following rules (the “Lenz laws”, here paraphrased from <a href="www.schoolofhaskell.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial">a Haskell lens tutorial</a>):</p>
 <ol style="list-style-type: decimal">
 <li>View-Set: If you <code>view</code> some data with a lens, and then <code>set</code> the data with that value, you get the input data back.</li>
 <li>Set-View: If you <code>set</code> a value with a lens, then <code>view</code> that value with the same lens, you get back what you put in.</li>
 <li>Set-Set: If you <code>set</code> a value into some data with a lens, and then <code>set</code> another value with the same lens, it’s the same as only doing the second <code>set</code>.</li>
 </ol>
-<p>“Lenses” which do not satisfy these properties should be documented accordingly. By convention, the few such specimens in this library are suffixed by “_il" (“illegal lens”).</p>
+<p>“Lenses” which do not satisfy these properties should be documented accordingly. By convention, the few such specimens in this library are suffixed by “_il" (“illegal lens”). See the package <a href="https://cfhammill.github.io/lenses/reference/">reference</a> for more.</p>
 </div>
 <div id="how-do-they-work" class="section level2">
 <h2 class="hasAnchor">
 <a href="#how-do-they-work" class="anchor"></a>How do they work?</h2>
 <p>As you can see from the <code>lens</code> constructor, knowing how to implement <code>view</code> and <code>set</code> for a lens turns out to be sufficient to implement the other verbs such as <code>over</code> and - most importantly - lens composition (<code>%.%</code>).</p>
-<p>In our implementation, <code>lens</code>es are trivial. They simply store the provided functions. A <code>lens</code> under the hood is a two element list with an element <code>set</code> and an element <code>view</code>.</p>
+<p>In our implementation, lenses are trivial. They simply store the provided functions. A <code>lens</code> under the hood is a two element list with an element <code>view</code> and an element <code>set</code>.</p>
 </div>
 <div id="history-of-lens-making" class="section level2">
 <h2 class="hasAnchor">
 <a href="#history-of-lens-making" class="anchor"></a>History of lens making</h2>
 <p>There is nothing particularly new about the lenses appearing here. For a fairly comprehensive (and highly technical) history of lenses, see <a href="https://github.com/ekmett/lens/wiki/History-of-Lenses">links here</a> and <a href="https://julesh.com/2018/08/16/lenses-for-philosophers/">this blog post</a> .</p>
+<hr>
+<p>Thanks to Leigh Spencer Noakes, Zsu Lindenmaier, and Lily Qiu for reading drafts of this document and providing very helpful feedback.</p>
 </div>
 </div>
   </div>
