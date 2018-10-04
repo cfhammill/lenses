@@ -195,6 +195,24 @@ over.oscope <- function(d, l, f){
   over(d$data, d$lens, l)
 }
 
+#' Map a function over a lens
+#'
+#' Apply the specified function to each element
+#' of the subobject.
+#'
+#' @param d the data
+#' @param l the lens
+#' @param f the function to use, potentially a `~` specified anonymous function.
+#' @export
+map_over <- function(d, l, f){
+  f <- as_closure(f)
+  sd <- view(d, l)
+  if(!is.list(sd))
+    stop("Map over can only be used with lenses returning a list")
+  
+  set(d, l, lapply(sd, f))
+}
+
 #' The identity (trivial lens)
 #'
 #' This lens focuses on the whole object
