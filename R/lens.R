@@ -239,6 +239,17 @@ indexes_l <- function(els){
 #' @export
 indexes <- indexes_l
 
+#' Slot lens
+#'
+#' The lens equivalent of `@` and `@<-`
+#' for getting and setting S4 object slots.
+#' @param slot the name of the slot
+#' @export
+slot_l <- function(slot){
+  lens(view = function(d) `@`(d, slot)
+     , set = function(d, x) `@<-`(d, slot, x))
+}
+
 #' A lens into the names of an object
 #'
 #' The lens versions of `names` and `names<-`.
