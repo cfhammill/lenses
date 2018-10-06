@@ -114,7 +114,7 @@ We can fix both of these problems by using lenses.
 
 Lenses give you all the power of R's `view` and `set` functions plus
 the advantages noted above. Especially important are the composition
-and bidirectionality features. Each lens can be used with its
+and bidirectionality features. Each lens can be used with the
 [`view`](https://cfhammill.github.io/lenses/reference/view.html),
 and [`set`](https://cfhammill.github.io/lenses/reference/set.html)
 functions.
@@ -122,7 +122,7 @@ functions.
 Let's revisit the operations we performed above using lenses. 
 
 The first thing we will do is construct a lens into the 
-third element of `Sepal.Length`:
+third element of the `Sepal.Length` component of a structure:
 
 ```{r}
 library(lenses)
@@ -142,7 +142,7 @@ to `iris`. Lenses are constructed without knowing what data they
 will be applied to.
 
 Now that we have a lens into the third element of `Sepal.Length`, 
-we can examine that element with the 
+we can examine the appropriate element of the `iris` dataset with the 
 [`view`](https://cfhammill.github.io/lenses/reference/view.html) function:
 
 ```{r}
@@ -232,7 +232,7 @@ You can use it with vectors, lists, data.frames, etc.
 
 If `select_l` isn't enticing enough, have you ever wanted to `set` 
 or modify the results of a `filter`?  This is not super easy to do in the `dplyr` 
-universe. But our lens-ified `filter`, 
+universe. But our `lens`ified `filter`, 
 [`filter_l`](https://cfhammill.github.io/lenses/reference/filter_l.html) does this 
 with ease.
 
