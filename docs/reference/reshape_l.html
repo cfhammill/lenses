@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The identity (trivial lens) — id_l • lenses</title>
+<title>Lens into a new dimension(s) — reshape_l • lenses</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,12 @@
 
 
 
-<meta property="og:title" content="The identity (trivial lens) — id_l" />
+<meta property="og:title" content="Lens into a new dimension(s) — reshape_l" />
 
-<meta property="og:description" content="This lens focuses on the whole object" />
+<meta property="og:description" content="Construct a lens that is a view of the data with
+a new set of dimensions. Both view and set check
+that the new dimensions match the number of elements of
+the data." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -97,31 +100,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The identity (trivial lens)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/base-lenses.R'><code>R/base-lenses.R</code></a></small>
-    <div class="hidden name"><code>id_l.Rd</code></div>
+    <h1>Lens into a new dimension(s)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/array-lenses.R'><code>R/array-lenses.R</code></a></small>
+    <div class="hidden name"><code>reshape_l.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This lens focuses on the whole object</p>
+    <p>Construct a lens that is a view of the data with
+a new set of dimensions. Both <a href='view.html'>view</a> and <a href='set.html'>set</a> check
+that the new dimensions match the number of elements of
+the data.</p>
     
     </div>
 
-    <pre class="usage"><span class='no'>id_l</span></pre>
-        
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
-    <p>An object of class <code>lens</code> of length 2.</p>
+    <pre class="usage"><span class='fu'>reshape_l</span>(<span class='no'>dims</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dims</th>
+      <td><p>a vector with the new dimensions</p></td>
+    </tr>
+    </table>
     
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      
-      <li><a href="#format">Format</a></li>
-          </ul>
+      <li><a href="#arguments">Arguments</a></li>
+                </ul>
 
   </div>
 </div>
