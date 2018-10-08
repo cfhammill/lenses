@@ -1,3 +1,6 @@
+#' @include lens.R verbs.R
+NULL
+
 #' Matrix transpose lens
 #'
 #' Lens into the transpose of a matrix
@@ -120,3 +123,26 @@ upper_tri_l <-
       d
     })
   }
+
+#' Lens into a new dimension(s)
+#'
+#' Construct a lens that is a view of the data with
+#' a new set of dimensions. Both [view] and [set] check
+#' that the new dimensions match the number of elements of
+#' the data.
+#' @param dims a vector with the new dimensions
+#' @export
+reshape_l <- function(dims){
+  lens(view = function(d) `dim<-`(d, dims)
+     , set = function(d,x){
+         rep_dims <- dim(x)
+         if(!is.null(rep_dims) &&
+            prod(rep_dims) != prod(dims) ||
+            length(x) != prod(dims))
+           stop("Replacement data in `reshape_l` does not have "
+              , "the correct shape or number of elements")
+
+         d[] <- x
+         d
+       })
+}

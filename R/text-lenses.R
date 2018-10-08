@@ -1,3 +1,6 @@
+#' @include lens.R verbs.R
+NULL
+
 #' A lens into a substring
 #'
 #' Make a lens to focus on a character range in one or more

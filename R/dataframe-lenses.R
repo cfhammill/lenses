@@ -1,3 +1,6 @@
+#' @include lens.R
+NULL
+
 #' Filter lens
 #'
 #' Create an illegal lens into the result of a filter. Arguments

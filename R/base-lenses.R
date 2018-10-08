@@ -90,7 +90,7 @@ dim_l <- lens(view = dim
 #' @export
 attr_l <- function(attrib){
   lens(view = function(d) attr(d, attrib)
-       , set = function(d, x) `attr<-`(d, attrib, x))
+     , set = function(d, x) `attr<-`(d, attrib, x))
 }
 
 #' Environment lens

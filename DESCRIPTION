@@ -17,7 +17,12 @@ Imports:
     magrittr,
     tidyselect,
     rlang
-Collate: 
-    'utils.R'
+Collate:
+    'verbs.R'
     'lens.R'
+    'array-lenses.R'
+    'base-lenses.R'
+    'utils.R'
+    'dataframe-lenses.R'
+    'text-lenses.R'
     'utils-pipe.R'
