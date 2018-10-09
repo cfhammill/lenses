@@ -19,6 +19,20 @@ index_l <- function(el){
        })
 }
 
+#' A lens into the first element
+#'
+#' Lens version of `x[[1]]` and `x[[1]] <- val`
+#' @export
+first_l <- lens(view = function(d) d[[1]]
+              , set = function(d, x){ d[[1]] <- x; d})
+
+#' A lens into the last element
+#'
+#' Lens version of `x[[length(x)]]` and `x[[length(x)]] <- val`
+#' @export
+last_l <- lens(view = function(d) d[[length(d)]]
+             , set = function(d, x){ d[[length(d)]] <- x; d})
+
 #' @describeIn index_l shorthand
 #' @export
 index <- index_l
@@ -37,6 +51,53 @@ indexes_l <- function(els){
          d
        })
 }
+
+#' Construct a lens into a prefix of a vector
+#'
+#' This constructs a lens into the first `n` elements
+#' of an object or the if negative indexing is used,
+#' as many as `length(x) - n`.
+#'
+#' @param n number of elements to take, or if negative the
+#' number of elements at the end to not take.
+#' @export
+take_l <- function(n){
+  lens(view =
+         function(d){
+           if(n < 0) n <- length(d) + n
+           if(n < 0) n <- length(d)
+           if(n > length(d))
+             stop("argument n in `take_l` must be less the the object length")
+           d[seq_len(n)]
+         }
+     , set =
+         function(d, x){
+           if(n < 0) n <- length(d) + n
+           if(n < 0) n <- length(d)
+           if(n > length(d))
+             stop("argument n in `take_l` must be less the the object length")
+
+           old_opts <- options()
+           on.exit(options(old_opts))
+           options(warn = 2)
+           d[seq_len(n)] <- x
+           d
+         })
+}
+
+#' Reverse lens
+#'
+#' Lens into the [rev]erse of an object.
+#' @export
+rev_l <-
+  lens(view = rev
+     , set = function(d, x){
+       old_opts <- options()
+       on.exit(options(old_opts))
+       options(warn = 2)
+       d[] <- rev(x)
+       d
+     })
 
 #' @describeIn indexes_l shorthand
 #' @export
