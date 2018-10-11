@@ -278,3 +278,37 @@ dimnames_l <-
 levels_l <-
   lens(view = levels
      , set = `levels<-`)
+
+#' Pluck as a lens
+#'
+#' A lens version of [purrr::pluck]. Takes
+#' a series element indicators and creates a composite
+#' lens.
+#' 
+#' - length one vectors are converted to [index_l],
+#' - larger vectors are converted to [indexes_l],
+#' - lenses are composed as is.
+#'
+#' See examples for more
+#' 
+#' @param ... index vectors or lenses
+#' @examples
+#' view(iris, pluck_l("Petal.Length", 10:20, 3))
+#' sepal_l <- index("Sepal.Length")
+#' view(iris, pluck_l(sepal_l, id_l, 3))
+#' @export
+pluck_l <- function(...){
+  dots <- list(...)
+  Reduce(function(acc, x){
+    if(inherits(x, "lens"))
+      return(acc %.% x)
+
+    if(!is.vector(x) || is.null(x))
+      stop("`pluck_l` expects all arguments to be either a lens or a atomic vector")
+
+    if(length(x) == 1)
+      return(acc %.% index(x))
+    
+    return(acc %.% indexes(x))
+  }, dots, init = id_l)
+}
