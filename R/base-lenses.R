@@ -312,3 +312,21 @@ pluck_l <- function(...){
     return(acc %.% indexes(x))
   }, dots, init = id_l)
 }
+
+#' Unlist lens
+#'
+#' A lens between a list and an unrecursively [unlist]ed object.
+#' @export
+unlist_l <-
+  lens(view =
+         function(d){
+           if(!is.list(d)) stop("`unlist_l` only works on lists") 
+           unlist(d, recursive = FALSE)
+         }
+     , set =
+         function(d, x){
+           if(!is.list(d)) stop("`unlist_l` only works on lists") 
+           d[] <- lapply(d, identity)
+           d
+         })
+  
