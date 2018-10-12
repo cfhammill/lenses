@@ -17,7 +17,9 @@ of the list.
 Uses \link{lapply} under the hood for \link{view}
 and \link{mapply} under the hood for \link{set}. This means
 that \link{set} can be given a list of values to set,
-one for each element.
+one for each element. If the input or update are
+lists this lens always returns a list. If the input
+and update are vectors this lens will return a vector.
 }
 \examples{
 (ex <- replicate(10, sample(1:5), simplify = FALSE))
