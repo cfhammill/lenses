@@ -209,10 +209,11 @@ cols_l <- function(cols, drop = FALSE){
 #' set(ex, map_l(index(1)), 11:20)
 #' @export
 map_l <- function(l){
+  is_length1_atomic <- function(x) is.atomic(x) && length(x) == 1
   lens(view =
          function(d){
            new_d <- lapply(d, view, l)
-           if(!is.list(d) && all(vapply(new_d, is.atomic, logical(1))))
+           if(!is.list(d) && all(vapply(new_d, is_length1_atomic, logical(1))))
              new_d <- unlist(new_d, recursive = FALSE)
            
            new_d
@@ -220,7 +221,7 @@ map_l <- function(l){
      , set =
          function(d, x){
            new_d <- mapply(set, d, x, MoreArgs = list(l = l), SIMPLIFY = FALSE)
-           if(!is.list(d) && !is.list(x) && all(vapply(new_d, is.atomic, logical(1))))
+           if(!is.list(d) && !is.list(x) && all(vapply(new_d, is_length1_atomic, logical(1))))
              new_d <- unlist(new_d, recursive = FALSE)
            
            new_d
