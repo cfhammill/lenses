@@ -317,17 +317,32 @@ cols_l <- function(cols, drop = FALSE){
 #' @details Uses [lapply] under the hood for [view]
 #' and [mapply] under the hood for [set]. This means
 #' that [set] can be given a list of values to set,
-#' one for each element. 
+#' one for each element. If the input or update are
+#' lists this lens always returns a list. If the input
+#' and update are vectors this lens will return a vector.
 #' @examples
 #' (ex <- replicate(10, sample(1:5), simplify = FALSE))
 #' view(ex, map_l(index(1)))
 #' set(ex, map_l(index(1)), 11:20)
 #' @export
 map_l <- function(l){
-  lens(view = function(d) lapply(d, view, l)
-     , set = function(d, x){
-       mapply(set, d, x, MoreArgs = list(l = l), SIMPLIFY = FALSE) 
-     })
+  is_length1_atomic <- function(x) is.atomic(x) && length(x) == 1
+  lens(view =
+         function(d){
+           new_d <- lapply(d, view, l)
+           if(!is.list(d) && all(vapply(new_d, is_length1_atomic, logical(1))))
+             new_d <- unlist(new_d, recursive = FALSE)
+           
+           new_d
+         }
+     , set =
+         function(d, x){
+           new_d <- mapply(set, d, x, MoreArgs = list(l = l), SIMPLIFY = FALSE)
+           if(!is.list(d) && !is.list(x) && all(vapply(new_d, is_length1_atomic, logical(1))))
+             new_d <- unlist(new_d, recursive = FALSE)
+           
+           new_d
+         })
 }
 
 #' Body lens
@@ -426,3 +441,21 @@ pluck_l <- function(...){
     return(acc %.% indexes(x))
   }, dots, init = id_l)
 }
+
+#' Unlist lens
+#'
+#' A lens between a list and an unrecursively [unlist]ed object.
+#' @export
+unlist_l <-
+  lens(view =
+         function(d){
+           if(!is.list(d)) stop("`unlist_l` only works on lists") 
+           unlist(d, recursive = FALSE)
+         }
+     , set =
+         function(d, x){
+           if(!is.list(d)) stop("`unlist_l` only works on lists") 
+           d[] <- lapply(d, identity)
+           d
+         })
+  

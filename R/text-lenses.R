@@ -120,7 +120,12 @@ fext_l <- function(extension = c("last", "first")){
 #'
 #' @export
 fname_l <-
-  strsplit_l(.Platform$file.sep) %.% map_l(rev_l %.% take_l(1))
+  lens(view = basename
+       , set = function(d,x){
+         sep <- .Platform$file.sep
+         pattern <- paste0("(^.*", sep, ")([^", sep, "]*/?$)")
+         sub(pattern, "\\2", x)
+       })
   
 #fpath_l
 #fstem_l 
