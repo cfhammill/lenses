@@ -445,17 +445,27 @@ pluck_l <- function(...){
 #' Unlist lens
 #'
 #' A lens between a list and an unrecursively [unlist]ed object.
+#' @examples
+#' (x <- list(x = list(y = 1:10)))
+#' view(x, unlist_l)
+#' set(x, unlist_l %.% unlist_l, rep("hello", 10))
 #' @export
 unlist_l <-
   lens(view =
          function(d){
            if(!is.list(d)) stop("`unlist_l` only works on lists") 
-           unlist(d, recursive = FALSE)
+           Reduce(c, d)
          }
      , set =
          function(d, x){
-           if(!is.list(d)) stop("`unlist_l` only works on lists") 
-           d[] <- lapply(d, identity)
+           if(!is.list(d)) stop("`unlist_l` only works on lists")
+           
+           d[] <- Reduce(function(acc, v){
+             max_ind <- acc$max_ind + length(v)
+             inds <- seq(acc$max_ind + 1, max_ind, by = 1)
+             
+             list(max_ind = max_ind, new_vals = c(acc$new_vals, list(x[inds])))
+           }, d, init = list(max_ind = 0, inds = NULL))$new_vals
            d
          })
   
