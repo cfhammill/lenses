@@ -14,3 +14,9 @@ Create an illegal lens into the result of a filter. Arguments
 are interpreted with non-standard evaluation as in
 \link[dplyr:filter]{dplyr::filter}
 }
+\examples{
+head(view(iris, filter_il(Species == "setosa"))) 
+head(over(iris,
+          filter_il(Species == "setosa") \%.\% select_l(-Species),
+          function(x) x + 10))
+}

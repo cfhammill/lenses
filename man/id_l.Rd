@@ -11,4 +11,9 @@ id_l
 \description{
 This lens focuses on the whole object
 }
+\examples{
+x <- 1:10
+view(x, id_l)
+head(set(x, id_l, iris))
+}
 \keyword{datasets}

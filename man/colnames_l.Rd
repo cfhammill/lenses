@@ -11,4 +11,12 @@ colnames_l
 \description{
 The lens version of \code{colnames} and \code{colnames<-}
 }
+\examples{
+x <- matrix(1:4, ncol = 2)
+colnames(x) <- c("first", "second")
+x
+
+view(x, colnames_l)
+set(x, colnames_l, c("premiere", "deuxieme"))
+}
 \keyword{datasets}

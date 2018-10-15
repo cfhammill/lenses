@@ -13,3 +13,8 @@ the attribute to lens into.}
 \description{
 The lens version of \code{attr} and \code{attr<-}
 }
+\examples{
+(x <- structure(1:10, important = "attribute"))
+view(x, attr_l("important"))
+set(x, attr_l("important"), "feature")
+}

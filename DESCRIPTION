@@ -1,7 +1,7 @@
 Package: lenses
 Version: 0.0.3
 Title: Elegant Data Manipulation with Lenses
-Description: Provides tools for creating and using lenses to simplify data manipulation. Lenses are composable getter/setter pairs for working with data in a purely functional way. Inspired by the haskell library lens.
+Description: Provides tools for creating and using lenses to simplify data manipulation. Lenses are composable getter/setter pairs for working with data in a purely functional way. Inspired by the 'Haskell' library 'lens' (Kmett, 2012) <https://hackage.haskell.org/package/lens>. For a fairly comprehensive (and highly technical) history of lenses please see the 'lens' wiki <https://github.com/ekmett/lens/wiki/History-of-Lenses>.
 Authors@R: c(person("Chris", "Hammill", , "cfhammill@gmail.com", c("aut", "cre", "trl")), person("Ben", "Darwin", , "", c("aut", "trl")))
 License: MIT + file LICENSE
 Encoding: UTF-8

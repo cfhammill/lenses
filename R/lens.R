@@ -31,8 +31,10 @@
 #' By convention, such objects present in this library are suffixed by "_il" ("illegal lens").
 #'
 #' @examples
-#'   view(1:10, index_l(4)) # returns 4
-#'   set(1:10, index_l(1), 10) # returns c(10, 2:10)
+#' third_l <- lens(view = function(d) d[[3]],
+#'                 set = function(d, x){ d[[3]] <- x; d })
+#' view(1:10, third_l) # returns 3
+#' set(1:10, third_l, 10) # returns c(1:2, 10, 4:10)
 #' @export
 lens <- function(view, set){
   structure(

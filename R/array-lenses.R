@@ -4,7 +4,10 @@ NULL
 #' Matrix transpose lens
 #'
 #' Lens into the transpose of a matrix
-#'
+#' @examples
+#' (x <- matrix(1:4, ncol = 2))
+#' view(x, t_l)
+#' set(x, t_l, matrix(11:14, ncol = 2))
 #' @export
 t_l <-
   lens(view = t
@@ -13,25 +16,6 @@ t_l <-
        if(any(dim(d) != dim(new_d)))
          stop("transposed matrix replacement in `t_l` does not have the right dimensions")
        
-       new_d
-     })
-
-#' Lens into a list of rows
-#'
-#' A lens that creates a list-of-rows view of a `data.frame`
-#' @export
-transpose_l <-
-  lens(view = function(d) lapply(seq_len(nrow(d)), function(i) d[i, , drop = FALSE])
-     , set = function(d, x){
-       new_d <- Reduce(rbind, x)
-       if(any(names(new_d) != names(d)))
-         stop("Names of replacement list components in `transpose_l` don't match the "
-            , "source data")
-
-       if(any(dim(new_d) != dim(d)))
-         stop("Length of the frames in the replacement list in `transpose_l` don't match "
-            , "the source data")
-
        new_d
      })
 
@@ -45,6 +29,11 @@ transpose_l <-
 #' @param slice the slice index
 #' @param drop whether or not to drop dimensions with length 1.
 #' Only applies to [view].
+#' @examples
+#' (x <- matrix(1:4, ncol = 2))
+#' view(x, slice_l(1, 2)) # x[2,, drop = FALSE]
+#' view(x, slice_l(2, 2)) # x[,2, drop = FALSE]
+#' set(x, slice_l(1,1), c(10,20))
 #' @export
 slice_l <- function(dimension, slice, drop = FALSE){
   getter <-
@@ -78,6 +67,11 @@ slice_l <- function(dimension, slice, drop = FALSE){
 #' @param ... arguments as they would be passed to \code{[} for example `x[3,5,7]`.
 #' @param drop whether or not to drop dimensions with length 1. Only
 #' applies to `view`.
+#' @examples
+#' (x <- matrix(1:4, ncol = 2))
+#' view(x, slab_l(2,)) # x[2,, drop = FALSE]
+#' view(x, slab_l(2, 2)) # x[2,2, drop = FALSE]
+#' set(x, slab_l(1,1:2), c(10,20))
 #' @export
 slab_l <- function(..., drop = FALSE){
   lens(view = function(d) d[..., drop = drop]
@@ -97,6 +91,11 @@ diag_l <-
 #' Create a lens into the lower diagonal elements
 #' of a matrix
 #' @param diag whether or not to include the diagonal
+#' @examples
+#' (x <- matrix(1:9, ncol = 3))
+#' view(x, lower_tri_l())
+#' view(x, lower_tri_l(diag = TRUE))
+#' set(x, lower_tri_l(), c(100, 200, 300))
 #' @export
 lower_tri_l <-
   function(diag = FALSE){
@@ -113,6 +112,10 @@ lower_tri_l <-
 #' Create a lens into the upper diagonal elements
 #' of a matrix
 #' @param diag whether or not to include the diagonal
+#' (x <- matrix(1:9, ncol = 3))
+#' view(x, upper_tri_l())
+#' view(x, upper_tri_l(diag = TRUE))
+#' set(x, upper_tri_l(), c(100, 200, 300)) 
 #' @export
 upper_tri_l <-
   function(diag = FALSE){
@@ -131,6 +134,10 @@ upper_tri_l <-
 #' that the new dimensions match the number of elements of
 #' the data.
 #' @param dims a vector with the new dimensions
+#' @examples
+#' x <- 1:9
+#' view(x, reshape_l(c(3,3)))
+#' set(x, reshape_l(c(3,3)) %.% diag_l, 100)
 #' @export
 reshape_l <- function(dims){
   lens(view = function(d) `dim<-`(d, dims)

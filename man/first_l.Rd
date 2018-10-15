@@ -10,6 +10,9 @@ first_l
 }
 \description{
 Lens version of \code{x[[1]]} and \code{x[[1]] <- val}
+x <- 1:10
+view(x, first_l)
+set(x, first_l, 50)
 
 [[1]: R:[1
 [[1]: R:[1

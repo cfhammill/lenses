@@ -13,4 +13,9 @@ A lens into the levels of an object. Usually
 this is factor levels. Lens
 equivalent of \link{levels} and \link{levels<-}.
 }
+\examples{
+x <- factor(c("a", "b"))
+view(x, levels_l)
+set(x, levels_l, c("A", "B"))
+}
 \keyword{datasets}

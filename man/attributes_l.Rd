@@ -11,4 +11,9 @@ attributes_l
 \description{
 The lens equivalent of \link{attributes} and \link{attributes<-}
 }
+\examples{
+(x <- structure(1:10, important = "attribute"))
+view(x, attributes_l)
+set(x, attributes_l, list(important = "feature"))
+}
 \keyword{datasets}

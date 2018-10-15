@@ -8,6 +8,11 @@ NULL
 #' [dplyr::filter]
 #'
 #' @param ... unquoted NSE filter arguments
+#' @examples
+#' head(view(iris, filter_il(Species == "setosa"))) 
+#' head(over(iris,
+#'           filter_il(Species == "setosa") %.% select_l(-Species),
+#'           function(x) x + 10))
 #' @export
 filter_il <- function(...){
   dots <- rlang::quos(...)
@@ -37,6 +42,9 @@ filter_il <- function(...){
 #'
 #' @param ... unquoted NSE filter arguments
 #' @include utils.R
+#' @examples
+#' head(view(iris, filter_l(Species == "setosa"))) # Note Species is not seen
+#' head(over(iris, filter_l(Species == "setosa"), function(x) x + 10))
 #' @export
 filter_l <- function(...){
   dots <- rlang::quos(...)
@@ -88,3 +96,22 @@ select_l <- function(...){
     d
   })
 }
+
+#' Lens into a list of rows
+#'
+#' A lens that creates a list-of-rows view of a `data.frame`
+#' @export
+transpose_l <-
+  lens(view = function(d) lapply(seq_len(nrow(d)), function(i) d[i, , drop = FALSE])
+     , set = function(d, x){
+       new_d <- Reduce(rbind, x)
+       if(any(names(new_d) != names(d)))
+         stop("Names of replacement list components in `transpose_l` don't match the "
+            , "source data")
+
+       if(any(dim(new_d) != dim(d)))
+         stop("Length of the frames in the replacement list in `transpose_l` don't match "
+            , "the source data")
+
+       new_d
+     })

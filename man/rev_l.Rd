@@ -11,4 +11,9 @@ rev_l
 \description{
 Lens into the \link{rev}erse of an object.
 }
+\examples{
+x <- 1:10
+view(x, rev_l)
+set(x, rev_l, 11:20)
+}
 \keyword{datasets}

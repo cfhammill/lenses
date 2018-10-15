@@ -14,4 +14,11 @@ allowing you to change the formal arguments of
 a function. As with \link{body_l} you probably shouldn't
 use this.
 }
+\examples{
+f <- function(x) x + y + 7
+view(f, formals_l)
+
+g <- set(f, formals_l, list(x = 1, y = 2))
+g()
+}
 \keyword{datasets}

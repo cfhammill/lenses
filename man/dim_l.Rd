@@ -11,4 +11,10 @@ dim_l
 \description{
 A lens into an objects dimensions
 }
+\examples{
+x <- 1:10
+
+(y <- set(x, dim_l, c(2,5)))
+view(y, dim_l)
+}
 \keyword{datasets}

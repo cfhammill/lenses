@@ -16,3 +16,9 @@ applies to \code{view}.}
 Create a lens into a chunk of an array (hyperslab). Uses
 the same syntactic rules as \code{[}.
 }
+\examples{
+(x <- matrix(1:4, ncol = 2))
+view(x, slab_l(2,)) # x[2,, drop = FALSE]
+view(x, slab_l(2, 2)) # x[2,2, drop = FALSE]
+set(x, slab_l(1,1:2), c(10,20))
+}

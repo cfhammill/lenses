@@ -1,6 +1,10 @@
 #' The identity (trivial lens)
 #'
 #' This lens focuses on the whole object
+#' @examples
+#' x <- 1:10
+#' view(x, id_l)
+#' head(set(x, id_l, iris))
 #' @export
 id_l <- lens(identity, function(., x) x)
 
@@ -10,6 +14,11 @@ id_l <- lens(identity, function(., x) x)
 #'
 #' @param el The element the lens should point to
 #' can be an `integer` or name.
+#' @examples
+#' x <- 1:10
+#' view(x, index_l(1))
+#' set(x, index(5), 50)
+#' head(view(iris, index(2)))
 #' @export
 index_l <- function(el){
   lens(view = function(d) d[[el]]
@@ -19,9 +28,16 @@ index_l <- function(el){
        })
 }
 
+#' @describeIn index_l shorthand
+#' @export
+index <- index_l
+
 #' A lens into the first element
 #'
 #' Lens version of `x[[1]]` and `x[[1]] <- val`
+#' x <- 1:10
+#' view(x, first_l)
+#' set(x, first_l, 50)
 #' @export
 first_l <- lens(view = function(d) d[[1]]
               , set = function(d, x){ d[[1]] <- x; d})
@@ -29,13 +45,13 @@ first_l <- lens(view = function(d) d[[1]]
 #' A lens into the last element
 #'
 #' Lens version of `x[[length(x)]]` and `x[[length(x)]] <- val`
+#' @examples
+#' x <- 1:10
+#' view(x, last_l)
+#' set(x, last_l, 50)
 #' @export
 last_l <- lens(view = function(d) d[[length(d)]]
              , set = function(d, x){ d[[length(d)]] <- x; d})
-
-#' @describeIn index_l shorthand
-#' @export
-index <- index_l
 
 #' Construct a lens into a subset of an object
 #'
@@ -43,6 +59,11 @@ index <- index_l
 #'
 #' @param els a subset vector, can be `integer`, `character`
 #' of `logical`, pointing to one or more elements of the object
+#' @examples
+#' x <- 1:10
+#' view(x, indexes_l(3:5))
+#' set(x, indexes_l(c(1,10)), NA)
+#' head(view(iris, indexes_l(c("Sepal.Length", "Species"))))
 #' @export
 indexes_l <- function(els){
   lens(view = function(d) d[els]
@@ -52,6 +73,10 @@ indexes_l <- function(els){
        })
 }
 
+#' @describeIn indexes_l shorthand
+#' @export
+indexes <- indexes_l
+
 #' Construct a lens into a prefix of a vector
 #'
 #' This constructs a lens into the first `n` elements
@@ -60,6 +85,12 @@ indexes_l <- function(els){
 #'
 #' @param n number of elements to take, or if negative the
 #' number of elements at the end to not take.
+#' @examples
+#' x <- 1:10
+#' view(x, take_l(3))
+#' view(x, take_l(-7))
+#' set(x, take_l(2), c(100,200))
+#' set(x, take_l(-8), c(100,200))
 #' @export
 take_l <- function(n){
   lens(view =
@@ -88,6 +119,10 @@ take_l <- function(n){
 #' Reverse lens
 #'
 #' Lens into the [rev]erse of an object.
+#' @examples
+#' x <- 1:10
+#' view(x, rev_l)
+#' set(x, rev_l, 11:20)
 #' @export
 rev_l <-
   lens(view = rev
@@ -99,15 +134,17 @@ rev_l <-
        d
      })
 
-#' @describeIn indexes_l shorthand
-#' @export
-indexes <- indexes_l
-
 #' Slot lens
 #'
 #' The lens equivalent of `@` and `@<-`
 #' for getting and setting S4 object slots.
 #' @param slot the name of the slot
+#' @examples
+#' new_class <- setClass("new_class", slots = c(x = "numeric"))
+#' (x <- new_class())
+#'
+#' view(x, slot_l("x"))
+#' set(x, slot_l("x"), 1:10)
 #' @export
 slot_l <- function(slot){
   lens(view = function(d) eval(bquote(`@`(d, .(slot))))
@@ -117,6 +154,9 @@ slot_l <- function(slot){
 #' A lens into the names of an object
 #'
 #' The lens versions of `names` and `names<-`.
+#' @examples
+#' view(iris, names_l)
+#' head(set(iris, names_l, LETTERS[1:5]))
 #' @export
 names_l <- lens(view = names
               , set = `names<-`)
@@ -124,6 +164,13 @@ names_l <- lens(view = names
 #' A lens into the column names of an object
 #'
 #' The lens version of `colnames` and `colnames<-`
+#' @examples
+#' x <- matrix(1:4, ncol = 2)
+#' colnames(x) <- c("first", "second")
+#' x
+#' 
+#' view(x, colnames_l)
+#' set(x, colnames_l, c("premiere", "deuxieme"))
 #' @export
 colnames_l <- lens(view = colnames
                   , set = `colnames<-`)
@@ -131,13 +178,41 @@ colnames_l <- lens(view = colnames
 #' A lens into the row names of an object
 #'
 #' The lens version of `rownames` and `rownames<-`
+#' @examples
+#' x <- matrix(1:4, ncol = 2)
+#' rownames(x) <- c("first", "second")
+#' x
+#' 
+#' view(x, rownames_l)
+#' set(x, rownames_l, c("premiere", "deuxieme"))
 #' @export
 rownames_l <- lens(view = rownames
                  , set = `rownames<-`)
 
+#' Dimnames lens
+#'
+#' A lens into the dimnames of an object. Lens
+#' equivalent of [dimnames] and [dimnames<-].
+#' @examples
+#' x <- matrix(1:4, ncol = 2)
+#' colnames(x) <- c("first", "second")
+#' x
+#' 
+#' view(x, dimnames_l)
+#' set(x, dimnames_l, list(NULL, c("premiere", "deuxieme")))
+#' @export
+dimnames_l <-
+  lens(view = dimnames
+     , set = `dimnames<-`)
+
 #' Dims lens
 #'
 #' A lens into an objects dimensions
+#' @examples
+#' x <- 1:10
+#'
+#' (y <- set(x, dim_l, c(2,5)))
+#' view(y, dim_l)
 #' @export
 dim_l <- lens(view = dim
             , set = `dim<-`)
@@ -148,16 +223,42 @@ dim_l <- lens(view = dim
 #' The lens version of `attr` and `attr<-`
 #' @param attrib A length one character vector indicating
 #' the attribute to lens into.
+#' @examples
+#' (x <- structure(1:10, important = "attribute"))
+#' view(x, attr_l("important"))
+#' set(x, attr_l("important"), "feature")
 #' @export
 attr_l <- function(attrib){
   lens(view = function(d) attr(d, attrib)
      , set = function(d, x) `attr<-`(d, attrib, x))
 }
 
+#' Attributes lens
+#'
+#' The lens equivalent of [attributes] and [attributes<-]
+#' @examples
+#' (x <- structure(1:10, important = "attribute"))
+#' view(x, attributes_l)
+#' set(x, attributes_l, list(important = "feature"))
+#' @export
+attributes_l <-
+  lens(view = attributes
+     , set = `attributes<-`)
+
 #' Environment lens
 #'
 #' A lens into the environment of an object. This
 #' is the lens version of [environment] and [environment<-]
+#' @examples
+#' x <- 10
+#' f <- (function(){x <- 2; function() x + 1})()
+#' f
+#'
+#' f()
+#' view(f, env_l)$x
+#' 
+#' g <- over(f, env_l, parent.env)
+#' g()
 #' @export
 env_l <- lens(environment, `environment<-`)
 
@@ -166,7 +267,15 @@ env_l <- lens(environment, `environment<-`)
 #' Create a lens into a set of rows
 #'
 #' @param rows the rows to focus on
-#' @param drop whether or not to drop dimensions with length 1 
+#' @param drop whether or not to drop dimensions with length 1
+#' @examples
+#' x <- matrix(1:4, ncol = 2)
+#' rownames(x) <- c("first", "second")
+#' x
+#'
+#' view(x, rows_l(1))
+#' view(x, rows_l("second"))
+#' set(x, rows_l(1), c(20,40))
 #' @export
 rows_l <- function(rows, drop = FALSE){
   lens(view = function(d) d[rows, ,drop = drop]
@@ -182,6 +291,14 @@ rows_l <- function(rows, drop = FALSE){
 #'
 #' @param cols the columns to focus on
 #' @param drop whether or not to drop dimensions with length 1
+#' @examples
+#' x <- matrix(1:4, ncol = 2)
+#' colnames(x) <- c("first", "second")
+#' x
+#'
+#' view(x, cols_l(1))
+#' view(x, cols_l("second"))
+#' set(x, cols_l(1), c(20,40))
 #' @export
 cols_l <- function(cols, drop = FALSE){
   lens(view = function(d) d[, cols,drop = FALSE]
@@ -213,14 +330,6 @@ map_l <- function(l){
      })
 }
 
-#' Attributes lens
-#'
-#' The lens equivalent of [attributes] and [attributes<-]
-#' @export
-attributes_l <-
-  lens(view = attributes
-     , set = `attributes<-`)
-
 #' Body lens
 #'
 #' A lens into the body of a function. The
@@ -244,6 +353,12 @@ body_l <-
 #' allowing you to change the formal arguments of
 #' a function. As with [body_l] you probably shouldn't
 #' use this.
+#' @examples
+#' f <- function(x) x + y + 7
+#' view(f, formals_l)
+#' 
+#' g <- set(f, formals_l, list(x = 1, y = 2))
+#' g()
 #' @export
 formals_l <-
   lens(view = formals
@@ -255,25 +370,24 @@ formals_l <-
 #'
 #' A lens into the class of an object. Lens
 #' equivalent of [class] and [class<-].
+#' @examples
+#' x <- 1:10
+#' view(x, class_l)
+#' set(x, class_l, "super_integer")
 #' @export
 class_l <-
   lens(view = class
      , set = `class<-`)
-
-#' Dimnames lens
-#'
-#' A lens into the dimnames of an object. Lens
-#' equivalent of [dimnames] and [dimnames<-].
-#' @export
-dimnames_l <-
-  lens(view = dimnames
-     , set = `dimnames<-`)
 
 #' Levels lens
 #'
 #' A lens into the levels of an object. Usually
 #' this is factor levels. Lens
 #' equivalent of [levels] and [levels<-].
+#' @examples
+#' x <- factor(c("a", "b"))
+#' view(x, levels_l)
+#' set(x, levels_l, c("A", "B"))
 #' @export
 levels_l <-
   lens(view = levels

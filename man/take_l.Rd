@@ -15,3 +15,10 @@ This constructs a lens into the first \code{n} elements
 of an object or the if negative indexing is used,
 as many as \code{length(x) - n}.
 }
+\examples{
+x <- 1:10
+view(x, take_l(3))
+view(x, take_l(-7))
+set(x, take_l(2), c(100,200))
+set(x, take_l(-8), c(100,200))
+}

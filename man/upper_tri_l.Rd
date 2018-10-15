@@ -7,7 +7,11 @@
 upper_tri_l(diag = FALSE)
 }
 \arguments{
-\item{diag}{whether or not to include the diagonal}
+\item{diag}{whether or not to include the diagonal
+(x <- matrix(1:9, ncol = 3))
+view(x, upper_tri_l())
+view(x, upper_tri_l(diag = TRUE))
+set(x, upper_tri_l(), c(100, 200, 300))}
 }
 \description{
 Create a lens into the upper diagonal elements

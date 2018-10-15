@@ -21,3 +21,9 @@ This is the lens version of \code{[[}
 \item \code{index}: shorthand
 }}
 
+\examples{
+x <- 1:10
+view(x, index_l(1))
+set(x, index(5), 50)
+head(view(iris, index(2)))
+}

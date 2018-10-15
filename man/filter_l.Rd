@@ -13,3 +13,7 @@ filter_l(...)
 Create a lawful lens into the result of a filter. This
 focuses only columns not involved in the filter condition.
 }
+\examples{
+head(view(iris, filter_l(Species == "setosa"))) # Note Species is not seen
+head(over(iris, filter_l(Species == "setosa"), function(x) x + 10))
+}

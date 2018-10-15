@@ -11,4 +11,8 @@ names_l
 \description{
 The lens versions of \code{names} and \code{names<-}.
 }
+\examples{
+view(iris, names_l)
+head(set(iris, names_l, LETTERS[1:5]))
+}
 \keyword{datasets}

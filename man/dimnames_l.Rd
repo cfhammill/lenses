@@ -12,4 +12,12 @@ dimnames_l
 A lens into the dimnames of an object. Lens
 equivalent of \link{dimnames} and \link{dimnames<-}.
 }
+\examples{
+x <- matrix(1:4, ncol = 2)
+colnames(x) <- c("first", "second")
+x
+
+view(x, dimnames_l)
+set(x, dimnames_l, list(NULL, c("premiere", "deuxieme")))
+}
 \keyword{datasets}

@@ -14,3 +14,12 @@ rows_l(rows, drop = FALSE)
 \description{
 Create a lens into a set of rows
 }
+\examples{
+x <- matrix(1:4, ncol = 2)
+rownames(x) <- c("first", "second")
+x
+
+view(x, rows_l(1))
+view(x, rows_l("second"))
+set(x, rows_l(1), c(20,40))
+}

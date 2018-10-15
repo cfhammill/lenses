@@ -12,4 +12,9 @@ class_l
 A lens into the class of an object. Lens
 equivalent of \link{class} and \link{class<-}.
 }
+\examples{
+x <- 1:10
+view(x, class_l)
+set(x, class_l, "super_integer")
+}
 \keyword{datasets}

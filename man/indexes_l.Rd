@@ -21,3 +21,9 @@ This is the lens version of \code{[}
 \item \code{indexes}: shorthand
 }}
 
+\examples{
+x <- 1:10
+view(x, indexes_l(3:5))
+set(x, indexes_l(c(1,10)), NA)
+head(view(iris, indexes_l(c("Sepal.Length", "Species"))))
+}

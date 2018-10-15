@@ -12,4 +12,15 @@ env_l
 A lens into the environment of an object. This
 is the lens version of \link{environment} and \link{environment<-}
 }
+\examples{
+x <- 10
+f <- (function(){x <- 2; function() x + 1})()
+f
+
+f()
+view(f, env_l)$x
+
+g <- over(f, env_l, parent.env)
+g()
+}
 \keyword{datasets}

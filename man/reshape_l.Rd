@@ -15,3 +15,8 @@ a new set of dimensions. Both \link{view} and \link{set} check
 that the new dimensions match the number of elements of
 the data.
 }
+\examples{
+x <- 1:9
+view(x, reshape_l(c(3,3)))
+set(x, reshape_l(c(3,3)) \%.\% diag_l, 100)
+}
