@@ -126,7 +126,9 @@ of the list.</p>
     <p>Uses lapply under the hood for <a href='view.html'>view</a>
 and mapply under the hood for <a href='set.html'>set</a>. This means
 that <a href='set.html'>set</a> can be given a list of values to set,
-one for each element.</p>
+one for each element. If the input or update are
+lists this lens always returns a list. If the input
+and update are vectors this lens will return a vector.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

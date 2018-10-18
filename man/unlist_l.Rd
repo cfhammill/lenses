@@ -11,4 +11,9 @@ unlist_l
 \description{
 A lens between a list and an unrecursively \link{unlist}ed object.
 }
+\examples{
+(x <- list(x = list(y = 1:10)))
+view(x, unlist_l)
+set(x, unlist_l \%.\% unlist_l, rep("hello", 10))
+}
 \keyword{datasets}

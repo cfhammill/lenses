@@ -121,12 +121,20 @@ the attribute to lens into.</p></td>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>(<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>structure</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>important</span> <span class='kw'>=</span> <span class='st'>"attribute"</span>))</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
+#&gt; attr(,"important")
+#&gt; [1] "attribute"</div><div class='input'><span class='fu'><a href='view.html'>view</a></span>(<span class='no'>x</span>, <span class='fu'>attr_l</span>(<span class='st'>"important"</span>))</div><div class='output co'>#&gt; [1] "attribute"</div><div class='input'><span class='fu'><a href='set.html'>set</a></span>(<span class='no'>x</span>, <span class='fu'>attr_l</span>(<span class='st'>"important"</span>), <span class='st'>"feature"</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
+#&gt; attr(,"important")
+#&gt; [1] "feature"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

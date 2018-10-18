@@ -122,12 +122,24 @@ for getting and setting S4 object slots.</p>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>new_class</span> <span class='kw'>&lt;-</span> <span class='fu'>setClass</span>(<span class='st'>"new_class"</span>, <span class='kw'>slots</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='st'>"numeric"</span>))
+(<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>new_class</span>())</div><div class='output co'>#&gt; An object of class "new_class"
+#&gt; Slot "x":
+#&gt; numeric(0)
+#&gt; </div><div class='input'>
+<span class='fu'><a href='view.html'>view</a></span>(<span class='no'>x</span>, <span class='fu'>slot_l</span>(<span class='st'>"x"</span>))</div><div class='output co'>#&gt; numeric(0)</div><div class='input'><span class='fu'><a href='set.html'>set</a></span>(<span class='no'>x</span>, <span class='fu'>slot_l</span>(<span class='st'>"x"</span>), <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt; An object of class "new_class"
+#&gt; Slot "x":
+#&gt;  [1]  1  2  3  4  5  6  7  8  9 10
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
