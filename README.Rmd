@@ -80,19 +80,21 @@ Composing our operations isn't easy, particularly when using pipes:
 ```{r}
 iris %>%
   .$Sepal.Length %>%
-  `[<-`(20)
+  `[<-`(3, 20)
 ```
 
-Whoops, that's not what we wanted.
+Whoops, that's not what we wanted. Here we see `Sepal.Length` with
+the third element replaced, but where did the rest of `iris` go! So
+we lose information when we pipe from a `view` to a `set`. 
 
 R's `set`/`view` pairs also can't be composed with function 
 compostion:
 
 ```{r}
-`[<-`(`$`(iris, `Sepal.Length`), 20)
+`[<-`(`$`(iris, `Sepal.Length`), 3, 20)
 ```
 
-still not what we want.
+still not what we want. It has the same problem above.
 
 This is a failure of "bidirectionality", once you've chosen to use a 
 `view` function, or a `set` function, you are locked into that direction.
