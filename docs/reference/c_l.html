@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Environment lens — env_l • lenses</title>
+<title>Convenient lens composition — c_l • lenses</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,11 @@
 
 
 
-<meta property="og:title" content="Environment lens — env_l" />
+<meta property="og:title" content="Convenient lens composition — c_l" />
 
-<meta property="og:description" content="A lens into the environment of an object. This
-is the lens version of environment and environment&amp;lt;-" />
+<meta property="og:description" content="A lens version of purrr::pluck. Takes
+a series element indicators and creates a composite
+lens." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -98,39 +99,51 @@ is the lens version of environment and environment&amp;lt;-" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Environment lens</h1>
+    <h1>Convenient lens composition</h1>
     <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/base-lenses.R'><code>R/base-lenses.R</code></a></small>
-    <div class="hidden name"><code>env_l.Rd</code></div>
+    <div class="hidden name"><code>c_l.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A lens into the environment of an object. This
-is the lens version of environment and environment&lt;-</p>
+    <p>A lens version of <a href='http://www.rdocumentation.org/packages/purrr/topics/pluck'>purrr::pluck</a>. Takes
+a series element indicators and creates a composite
+lens.</p>
     
     </div>
 
-    <pre class="usage"><span class='no'>env_l</span></pre>
-        
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <pre class="usage"><span class='fu'>c_l</span>(<span class='no'>...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>...</th>
+      <td><p>index vectors or lenses</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>An object of class <code>lens</code> of length 2.</p>
+    <ul>
+<li><p>length one vectors are converted to <a href='index_l.html'>index_l</a>,</p></li>
+<li><p>length one numeric vectors that are negative are converted to <a href='indexes_l.html'>indexes_l</a>,</p></li>
+<li><p>larger vectors are converted to <a href='indexes_l.html'>indexes_l</a>,</p></li>
+<li><p>lenses are composed as is.</p></li>
+</ul>
+    <p>See examples for more</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
-<span class='no'>f</span> <span class='kw'>&lt;-</span> (<span class='kw'>function</span>(){<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span>; <span class='kw'>function</span>() <span class='no'>x</span> + <span class='fl'>1</span>})()
-<span class='no'>f</span></div><div class='output co'>#&gt; function() x + 1
-#&gt; &lt;environment: 0x34345b0&gt;</div><div class='input'>
-<span class='fu'>f</span>()</div><div class='output co'>#&gt; [1] 3</div><div class='input'><span class='fu'><a href='view.html'>view</a></span>(<span class='no'>f</span>, <span class='no'>env_l</span>)$<span class='no'>x</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'>
-<span class='no'>g</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='over.html'>over</a></span>(<span class='no'>f</span>, <span class='no'>env_l</span>, <span class='no'>parent.env</span>)
-<span class='fu'>g</span>()</div><div class='output co'>#&gt; [1] 11</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='view.html'>view</a></span>(<span class='no'>iris</span>, <span class='fu'>c_l</span>(<span class='st'>"Petal.Length"</span>, <span class='fl'>10</span>:<span class='fl'>20</span>, <span class='fl'>3</span>))</div><div class='output co'>#&gt; [1] 1.6</div><div class='input'><span class='no'>sepal_l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='index_l.html'>index</a></span>(<span class='st'>"Sepal.Length"</span>)
+<span class='fu'><a href='view.html'>view</a></span>(<span class='no'>iris</span>, <span class='fu'>c_l</span>(<span class='no'>sepal_l</span>, <span class='no'>id_l</span>, <span class='fl'>3</span>))</div><div class='output co'>#&gt; [1] 4.7</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#format">Format</a></li>
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
