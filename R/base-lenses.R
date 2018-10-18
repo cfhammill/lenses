@@ -408,13 +408,14 @@ levels_l <-
   lens(view = levels
      , set = `levels<-`)
 
-#' Pluck as a lens
+#' Convenient lens composition
 #'
 #' A lens version of [purrr::pluck]. Takes
 #' a series element indicators and creates a composite
 #' lens.
 #' 
 #' - length one vectors are converted to [index_l],
+#' - length one numeric vectors that are negative are converted to [indexes_l],
 #' - larger vectors are converted to [indexes_l],
 #' - lenses are composed as is.
 #'
@@ -422,20 +423,20 @@ levels_l <-
 #' 
 #' @param ... index vectors or lenses
 #' @examples
-#' view(iris, pluck_l("Petal.Length", 10:20, 3))
+#' view(iris, c_l("Petal.Length", 10:20, 3))
 #' sepal_l <- index("Sepal.Length")
-#' view(iris, pluck_l(sepal_l, id_l, 3))
+#' view(iris, c_l(sepal_l, id_l, 3))
 #' @export
-pluck_l <- function(...){
+c_l <- function(...){
   dots <- list(...)
   Reduce(function(acc, x){
     if(inherits(x, "lens"))
       return(acc %.% x)
 
     if(!is.vector(x) || is.null(x))
-      stop("`pluck_l` expects all arguments to be either a lens or a atomic vector")
+      stop("`c_l` expects all arguments to be either a lens or a atomic vector")
 
-    if(length(x) == 1)
+    if(length(x) == 1 && ! (is.numeric(x) && x < 0))
       return(acc %.% index(x))
     
     return(acc %.% indexes(x))
