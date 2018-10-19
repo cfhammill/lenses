@@ -16,6 +16,9 @@ set.default <- function(d, l, x){
   if(!inherits(l,"lens"))
     stop("second argument of set must be a lens")
 
+  if(attr(l, "getter"))
+    stop("can't set into a `getter` lens")
+
   l$set(d, x)
 }
 
@@ -85,11 +88,14 @@ view.oscope <- function(d, l){
 `%.%.lens` <- function(l, m){
   if(!inherits(m, "lens"))
     stop("the second argument of lens composition must be a lens")
+
+  getter <- attr(l, "getter") || attr(m, "getter")
   
   lens(function(d) m$view(l$view(d))
      , set = function(d, x){
        l$set(d, m$set(l$view(d), x))
-       })
+     }
+     , getter = getter)
 }
 
 #' @method "%.%" oscope

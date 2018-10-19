@@ -13,6 +13,8 @@
 #' and a value and returns a new data structure with the given subpart
 #' replaced with the given value.  Note that `set` should not modify
 #' the original data.
+#' @param getter Default is `FALSE`, if `TRUE` the created lens cannot
+#' be `set` into.
 #' @details Lenses are popular in functional programming because
 #' they allow you to build pure, compositional, and re-usable "getters" and "setters".
 #'
@@ -36,10 +38,11 @@
 #' view(1:10, third_l) # returns 3
 #' set(1:10, third_l, 10) # returns c(1:2, 10, 4:10)
 #' @export
-lens <- function(view, set){
+lens <- function(view, set, getter = FALSE){
   structure(
     list(view = view
        , set = set)
+  , getter = getter
   , class = "lens")
 }
 

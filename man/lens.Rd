@@ -4,7 +4,7 @@
 \alias{lens}
 \title{Construct a lens}
 \usage{
-lens(view, set)
+lens(view, set, getter = FALSE)
 }
 \arguments{
 \item{view}{A function that takes a data structure of a certain type
@@ -14,6 +14,9 @@ and returns a subpart of that structure}
 and a value and returns a new data structure with the given subpart
 replaced with the given value.  Note that \code{set} should not modify
 the original data.}
+
+\item{getter}{Default is \code{FALSE}, if \code{TRUE} the created lens cannot
+be \code{set} into.}
 }
 \description{
 A \code{lens} represents the process of focussing on a specific part of a data structure.

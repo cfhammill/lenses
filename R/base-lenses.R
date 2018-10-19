@@ -345,6 +345,18 @@ map_l <- function(l){
          })
 }
 
+#' Promote a function to a `getter` lens
+#'
+#' Create a `getter` lens from a function.
+#'
+#' @param f The function to promote.
+#' @export
+to_l <- function(f){
+  lens(view = f
+     , set = function(d,x) stop("`to_l` lenses cannot be set through")
+     , getter = TRUE)
+}
+
 #' Body lens
 #'
 #' A lens into the body of a function. The
