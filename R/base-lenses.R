@@ -350,6 +350,16 @@ map_l <- function(l){
 #' Create a `getter` lens from a function.
 #'
 #' @param f The function to promote.
+#' @examples
+#' # This wouldn't make sense as a general legal lens, but fine as a `getter`
+#' sqrt_l <- to_l(sqrt)
+#' iris_root <- index(1) %.% index(1) %.% sqrt_l
+#'
+#' sqrt(iris[[1]][[1]])
+#' iris %>% view(iris_root)
+#' tryCatch(iris %>% set(iris_root, 2)
+#'        , error = function(e) "See, can't do that")
+#' 
 #' @export
 to_l <- function(f){
   lens(view = f
