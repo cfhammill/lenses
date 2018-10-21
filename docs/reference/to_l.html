@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Construct a lens — lens • lenses</title>
+<title>Promote a function to a <code>getter</code> lens — to_l • lenses</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,14 +30,9 @@
 
 
 
-<meta property="og:title" content="Construct a lens — lens" />
+<meta property="og:title" content="Promote a function to a <code>getter</code> lens — to_l" />
 
-<meta property="og:description" content="A lens represents the process of focussing on a specific part of a data structure.
-We represent this via a view function and
-an set function, roughly corresponding to object-oriented
-&quot;getters&quot; and &quot;setters&quot; respectively.
-Lenses can be composed to access or modify deeply nested
-structures." />
+<meta property="og:description" content="Create a getter lens from a function." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -112,76 +107,43 @@ structures." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Construct a lens</h1>
-    <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/lens.R'><code>R/lens.R</code></a></small>
-    <div class="hidden name"><code>lens.Rd</code></div>
+    <h1>Promote a function to a <code>getter</code> lens</h1>
+    <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/base-lenses.R'><code>R/base-lenses.R</code></a></small>
+    <div class="hidden name"><code>to_l.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A <code>lens</code> represents the process of focussing on a specific part of a data structure.
-We represent this via a <code>view</code> function and
-an <code>set</code> function, roughly corresponding to object-oriented
-"getters" and "setters" respectively.
-Lenses can be composed to access or modify deeply nested
-structures.</p>
+    <p>Create a <code>getter</code> lens from a function.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>lens</span>(<span class='no'>view</span>, <span class='no'>set</span>, <span class='kw'>getter</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>to_l</span>(<span class='no'>f</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>view</th>
-      <td><p>A function that takes a data structure of a certain type
-and returns a subpart of that structure</p></td>
-    </tr>
-    <tr>
-      <th>set</th>
-      <td><p>A function that takes a data structure of a certain type
-and a value and returns a new data structure with the given subpart
-replaced with the given value.  Note that <code>set</code> should not modify
-the original data.</p></td>
-    </tr>
-    <tr>
-      <th>getter</th>
-      <td><p>Default is <code>FALSE</code>, if <code>TRUE</code> the created lens cannot
-be <code>set</code> into.</p></td>
+      <th>f</th>
+      <td><p>The function to promote.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Lenses are popular in functional programming because
-they allow you to build pure, compositional, and re-usable "getters" and "setters".</p>
-<p>As noted in the README, using <code>lens</code> directly incurs the following obligations
-(the "Lens laws"):</p><ol>
-<li><p>Get-Put: If you get (view) some data with a lens, and then
-modify (set) the data with that value, you get the input data back.</p></li>
-<li><p>Put-Get: If you put (set) a value into some data with a lens,
-then get that value with the lens, you get back what you put in.</p></li>
-<li><p>Put-Put: If you put a value into some data with a lens, and
-then put another value with the same lens, it's the same as only
-doing the second put.</p></li>
-</ol>
-    <p>"Lenses" which do not satisfy these properties should be documented accordingly.
-By convention, such objects present in this library are suffixed by "_il" ("illegal lens").</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>third_l</span> <span class='kw'>&lt;-</span> <span class='fu'>lens</span>(<span class='kw'>view</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>d</span>) <span class='no'>d</span><span class='kw'>[[</span><span class='fl'>3</span>]],
-                <span class='kw'>set</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>d</span>, <span class='no'>x</span>){ <span class='no'>d</span><span class='kw'>[[</span><span class='fl'>3</span>]] <span class='kw'>&lt;-</span> <span class='no'>x</span>; <span class='no'>d</span> })
-<span class='fu'><a href='view.html'>view</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='no'>third_l</span>) <span class='co'># returns 3</span></div><div class='output co'>#&gt; [1] 3</div><div class='input'><span class='fu'><a href='set.html'>set</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='no'>third_l</span>, <span class='fl'>10</span>) <span class='co'># returns c(1:2, 10, 4:10)</span></div><div class='output co'>#&gt;  [1]  1  2 10  4  5  6  7  8  9 10</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># This wouldn't make sense as a general legal lens, but fine as a `getter`</span>
+<span class='no'>sqrt_l</span> <span class='kw'>&lt;-</span> <span class='fu'>to_l</span>(<span class='no'>sqrt</span>)
+<span class='no'>iris_root</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='index_l.html'>index</a></span>(<span class='fl'>1</span>) <span class='kw'>%.%</span> <span class='fu'><a href='index_l.html'>index</a></span>(<span class='fl'>1</span>) <span class='kw'>%.%</span> <span class='no'>sqrt_l</span>
+
+<span class='fu'>sqrt</span>(<span class='no'>iris</span><span class='kw'>[[</span><span class='fl'>1</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; [1] 2.258318</div><div class='input'><span class='no'>iris</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='view.html'>view</a></span>(<span class='no'>iris_root</span>)</div><div class='output co'>#&gt; [1] 2.258318</div><div class='input'><span class='fu'>tryCatch</span>(<span class='no'>iris</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='set.html'>set</a></span>(<span class='no'>iris_root</span>, <span class='fl'>2</span>)
+       , <span class='kw'>error</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>e</span>) <span class='st'>"See, can't do that"</span>)</div><div class='output co'>#&gt; [1] "See, can't do that"</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#details">Details</a></li>
-      
+            
       <li><a href="#examples">Examples</a></li>
     </ul>
 
