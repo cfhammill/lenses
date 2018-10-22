@@ -139,7 +139,7 @@ over.oscope <- function(d, l, f){
   over(d$data, d$lens, l)
 }
 
-#' Map a function over a lens
+#' Map a function over a list lens
 #'
 #' Apply the specified function to each element
 #' of the subobject.
@@ -148,13 +148,31 @@ over.oscope <- function(d, l, f){
 #' @param l the lens
 #' @param f the function to use, potentially a `~` specified anonymous function.
 #' @export
-map_over <- function(d, l, f){
+over_map <- function(d, l, f){
   f <- as_closure(f)
   sd <- view(d, l)
   if(!is.list(sd))
-    stop("Map over can only be used with lenses returning a list")
+    stop("`over_map` can only be used with lenses returning a list")
   
   set(d, l, lapply(sd, f))
+}
+
+#' Map a function over an in scope lens
+#'
+#' Apply the specified function with named elements of
+#' the viewed data in scope. Similar to [dplyr::mutate]
+#'
+#' @param d the data
+#' @param l the lens
+#' @param f the function to use, potentially a `~` specified anonymous function.
+#' The function body is quoted, and evaluated with `rlang::eval_tidy(..., data = view(d,l))`
+#' @examples
+#' iris %>% over_with(id_l, ~ Sepal.Length)
+#' @export
+over_with <- function(d, l, f){
+  f <- as_closure(f)
+  body(f) <- bquote(rlang::eval_tidy(quote(.(body(f))), data = .(view(d,l))))
+  set(d, l, f(view(d,l)))  
 }
 
 #' Set one lens to the view of another
