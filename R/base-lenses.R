@@ -520,7 +520,8 @@ levels_l <-
 #' lens.
 #' 
 #' - length one vectors are converted to [index_l],
-#' - length one numeric vectors that are negative are converted to [indexes_l],
+#' - length one logical vectors and numeric vectors that are negative are
+#'   converted to [indexes_l],
 #' - larger vectors are converted to [indexes_l],
 #' - lenses are composed as is.
 #'
@@ -541,7 +542,7 @@ c_l <- function(...){
     if(!is.vector(x) || is.null(x))
       stop("`c_l` expects all arguments to be either a lens or a atomic vector")
 
-    if(length(x) == 1 && ! (is.numeric(x) && x < 0))
+    if(length(x) == 1 && !is.logical(x) && ! (is.numeric(x) && x < 0))
       return(acc %.% index(x))
     
     return(acc %.% indexes(x))

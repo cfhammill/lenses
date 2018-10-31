@@ -17,7 +17,8 @@ lens.
 \details{
 \itemize{
 \item length one vectors are converted to \link{index_l},
-\item length one numeric vectors that are negative are converted to \link{indexes_l},
+\item length one logical vectors and numeric vectors that are negative are
+converted to \link{indexes_l},
 \item larger vectors are converted to \link{indexes_l},
 \item lenses are composed as is.
 }
