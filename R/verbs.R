@@ -192,7 +192,7 @@ send <- function(d, l, m){
 #' @param l the lens to view through
 #' @param m the lens to set into
 #' @export
-send_over <- function(d, f, l, m){
+send_over <- function(d, l, m, f){
   f <- as_closure(f)
   m$set(d, f(l$view(d)))
 }

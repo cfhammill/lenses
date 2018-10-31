@@ -4,16 +4,16 @@
 \alias{send_over}
 \title{Set one lens to the view of another (transformed)}
 \usage{
-send_over(d, f, l, m)
+send_over(d, l, m, f)
 }
 \arguments{
 \item{d}{the data}
 
-\item{f}{the function to apply to the viewed data}
-
 \item{l}{the lens to view through}
 
 \item{m}{the lens to set into}
+
+\item{f}{the function to apply to the viewed data}
 }
 \description{
 Set one lens to the view of another (transformed)
