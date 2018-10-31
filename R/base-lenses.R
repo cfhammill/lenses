@@ -116,6 +116,89 @@ take_l <- function(n){
          })
 }
 
+#' Conditional lens
+#'
+#' [view] is equivalent to `Filter(f,d)`,
+#' [set] replaces elements that satisfy `f` with elements
+#' of x.
+#'
+#' This lens is illegal because `set-view` is not satisfied,
+#' multiple runs of the same lens will reference potentially
+#' different elements.
+#'
+#' @param f the predicate (logical) function
+#' @export
+cond_il <- function(f){
+  lens(view =
+         function(d) Filter(f, d)
+     , set =
+         function(d,x){
+           passes <- vapply(d, f, logical(1))
+           d[passes] <- x
+           d
+         })
+}
+
+#' Conditional head lens
+#'
+#' A lens into the elements from the beginning
+#' of a structure until the last element that satisfies a
+#' predicate.
+#'
+#' This lens is illegal because `set-view` is not satisfied,
+#' multiple runs of the same lens will reference potentially
+#' different elements.
+#' @param f the predicate (logical) function
+#' @export
+take_while_il <- function(f){
+  f <- as_lambda(f)
+  satisfies_l <- function(d){
+    inds <- numeric()
+    for(i in seq_along(d)){
+      if(f(d[[i]])){
+        inds[i] <- i
+      } else {
+        break
+      }
+    }
+    
+    indexes_l(inds)
+  }
+  
+  lens(view = function(d) view(d, satisfies_l(d))
+     , set = function(d,x) set(d, satisfies_l(d), x))
+}
+
+#' Conditional trim lens
+#'
+#' A lens into all elements starting from the first
+#' element that doesn't satisfy a predicate. Essentially
+#' the complement of [take_while_l]
+#'
+#' @param f the predicate (logical) function
+#' @export
+drop_while_il <- function(f){
+  f <- as_lambda(f)
+  not_satisfies_l <- function(d){
+    inds <- numeric()
+    for(i in seq_along(d)){
+      if(f(d[[i]])){
+        inds[i] <- i
+      } else {
+        break
+      }
+    }
+
+    if(length(inds) == 0) ##if no matches, use double negation to drop none
+      inds <- -seq_along(d)
+    
+    indexes_l(-inds)
+  }
+  
+  lens(view = function(d) view(d, not_satisfies_l(d))
+     , set = function(d,x) set(d, not_satisfies_l(d), x))
+}
+
 #' Reverse lens
 #'
 #' Lens into the [rev]erse of an object.
