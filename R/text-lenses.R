@@ -106,15 +106,15 @@ fname_l <-
   ) %.%
   collapse_l(.Platform$file.sep) %>%
   ## Add an extra argument check to set to ensure no path seperators
-  over(c_l("set", body_l), function(bdy){
-    rlang::expr({
+  over(c_l("set"), function(sf){
+    function(d,x){
       if(any(grepl(.Platform$file.sep, x)))
         stop("Replacements in `fname_l` cannot have "
            , .Platform$file.sep
            , " in them")
 
-      !!bdy
-    })
+      sf(d,x)
+    }
   })
 
 #' Lens into the path of the file
