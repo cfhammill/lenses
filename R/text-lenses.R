@@ -159,6 +159,55 @@ fpath_l <-
                              , view(spl, c_l(which_last_non_empty(spl):length(spl)))))
                 }, seq_along(pl), init = pl))
          }) 
+
+#' Create a lens into the file extension
+#'
+#' A lens that focuses on the extension of a filepath 
+#' The function creates one of two lenses, `last` extension which considers everything
+#' after the last dot (`.`) an extension, and `first` which considers
+#' everything after the first dot in the basename of the file to be
+#' part of the file extension.
+#' @param extension last or first indicating what type of extensions to
+#' focus on.
+#' @examples
+#' view("hi.tar.gz", fext_l())
+#' view("hi.tar.gz", fext_l("first"))
+#' set("hi.tar.gz", fext_l(), "xz")
+#' set("hi.tar.gz", fext_l("first"),  "tgz")
+#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l("first"), c("tgz", "wut"))
+#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l(), c("tgz", "wut"))
+#' @export
+fext_l <- function(extension = c("last", "first")){
+  extension = match.arg(extension)
+  if(extension == "first"){
+    split_name <- fname_l %.% strsplit_l(".")
+    dlast_and_collapse <- map_l(c_l(-1)) %.% collapse_l(".")
+    all_first <- map_l(first_l)
+    
+    lens(view = function(d) view(d, split_name %.% dlast_and_collapse)
+       , set =
+           function(d,x){
+             send_over(d
+                     , split_name %.% all_first %.% unlist_l
+                     , fname_l
+                     , nm ~ paste0(nm, ".", x)
+                     )
+           }
+         )
   
-#fpath_l
-#fstem_l 
+  } else {
+    nml <- c_l(fname_l, strsplit_l("."), map_l(last_l), unlist_l)
+    # this lens is exactly as above, but with an extra validation
+    # that the replacement doesn't contain `.`
+    over(nml, c_l("set", body_l)
+       , function(cmd){
+         rlang::expr({
+           if(any(grepl("\\.", x)))
+             stop("Replacement in `fext_l` with `extension = 'last'` can't"
+                , " contain `.`")
+           
+           !!cmd
+         })
+       })
+  }
+}
