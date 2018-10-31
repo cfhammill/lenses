@@ -91,21 +91,74 @@ collapse_l <- function(collapse){
 path2list_l <- strsplit_l(.Platform$file.sep)
   
 
-           setNames(updated, NULL)
-         }
-       )
+which_last_non_empty <- function(x){
+  lne <- which(x != "") %>% { .[length(.)] }
+  if(length(lne) == 0) lne <- length(x)
+  lne
 }
 
 #' Lens into the name and extension of a path
 #'
+#' [view] is `basename`, [set] replaces everything after
+#' the last file separator. Trailing file separators
+#' are ignored.
+#'
 #' @export
 fname_l <-
   lens(view = basename
-       , set = function(d,x){
-         sep <- .Platform$file.sep
-         pattern <- paste0("(^.*", sep, ")([^", sep, "]*/?$)")
-         sub(pattern, "\\2", x)
-       })
+     , set =
+         function(d,x){
+           sep <- .Platform$file.sep
+           if(any(grepl(sep, x)))
+             stop("Replacements in `fname_l` cannot contain file separators")
+           
+           over(d, path2list_l,
+                pl ~ Reduce(function(acc, i){
+                  ith_l <- c_l(i)
+                  over(acc, ith_l
+                     , spl ~ set(spl, c_l(which_last_non_empty(spl)), view(x, ith_l)))
+                }, seq_along(pl), init = pl))
+         })
+
+#' Lens into the path of the file
+#'
+#' This lens extracts the path from a string interpretted as a path.
+#' [view] is roughly equivalent to [basename], it differs on how it
+#' handles relative paths with no file separators. `view("x/", fpath_l)`
+#' returns `NA`, `basename("x/")` returns `.`. This difference is to satisfy
+#' the `view-set` law.
+#' [set] also special cases replacing with `NA`, obliterating any path components.
+#' `set("/a/file/path/", fpath_l, NA)` returns `"path/"` contrast this with
+#' `set("/a/file/path/", fpath_l, "")` which returns `"/path/"`.
+#'
+#' @examples
+#' set("/a/file/path/", fpath_l, NA)
+#' set("/a/file/path/", fpath_l, "")
+#' view("x", fpath_l)
+#' view("/a/file/path/", fpath_l)
+#' @export
+fpath_l <-
+  lens(view =
+         function(d){
+           sep <- .Platform$file.sep
+           pl <- view(d, path2list_l)
+           vapply(pl, function(l){
+             pth <- view(l, c_l(take_l(which_last_non_empty(l) - 1)))
+             if(length(pth) == 0) return(NA_character_)
+             view(list(pth), collapse_l(sep))             
+           }, character(1))             
+         }
+     , set =
+         function(d, x){
+           sep <- .Platform$file.sep
+           over(d, path2list_l,
+                pl ~ Reduce(function(acc, i){
+                  ith_l <- c_l(i)
+                  over(acc, ith_l
+                     , spl ~ c(view(x, ith_l) %>% { `if`(is.na(.), NULL, .) }
+                             , view(spl, c_l(which_last_non_empty(spl):length(spl)))))
+                }, seq_along(pl), init = pl))
+         }) 
   
 #fpath_l
 #fstem_l 
