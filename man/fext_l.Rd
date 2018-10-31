@@ -2,7 +2,7 @@
 % Please edit documentation in R/text-lenses.R
 \name{fext_l}
 \alias{fext_l}
-\title{Create lens into the file extension}
+\title{Create a lens into the file extension}
 \usage{
 fext_l(extension = c("last", "first"))
 }
@@ -12,9 +12,16 @@ focus on.}
 }
 \description{
 A lens that focuses on the extension of a filepath
-Inspiration/regex pieces from Jim Hester and r-lib's fs package.
-The function creates one of two \code{last} which considers everything
+The function creates one of two lenses, \code{last} extension which considers everything
 after the last dot (\code{.}) an extension, and \code{first} which considers
 everything after the first dot in the basename of the file to be
 part of the file extension.
+}
+\examples{
+view("hi.tar.gz", fext_l())
+view("hi.tar.gz", fext_l("first"))
+set("hi.tar.gz", fext_l(), "xz")
+set("hi.tar.gz", fext_l("first"),  "tgz")
+set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l("first"), c("tgz", "wut"))
+set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l(), c("tgz", "wut"))
 }

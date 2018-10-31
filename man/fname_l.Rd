@@ -9,6 +9,8 @@
 fname_l
 }
 \description{
-Lens into the name and extension of a path
+\link{view} is \code{basename}, \link{set} replaces everything after
+the last file separator. Trailing file separators
+are ignored.
 }
 \keyword{datasets}
