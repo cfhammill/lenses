@@ -135,27 +135,35 @@ fname_l <-
 #' view("/a/file/path/", fpath_l)
 #' @export
 fpath_l <-
+  local({
+    sep <- .Platform$file.sep
+    pth_l <-
+      path2list_l %.%
+      map_l(rev_l %.%
+            drop_while_il(seg ~ seg == "") %.%
+            indexes_l(-1) %.%
+            rev_l
+            )
+    
   lens(view =
          function(d){
-           sep <- .Platform$file.sep
-           pl <- view(d, path2list_l)
-           vapply(pl, function(l){
-             pth <- view(l, c_l(take_l(which_last_non_empty(l) - 1)))
-             if(length(pth) == 0) return(NA_character_)
-             view(list(pth), collapse_l(sep))             
-           }, character(1))             
+           pth <- view(d, pth_l)
+           empty_l <- c_l(vapply(pth, function(el) length(el) == 0, logical(1)))
+           view(pth, collapse_l(sep)) %>%
+             set(empty_l, NA)
          }
      , set =
          function(d, x){
-           sep <- .Platform$file.sep
-           over(d, path2list_l,
-                pl ~ Reduce(function(acc, i){
-                  ith_l <- c_l(i)
-                  over(acc, ith_l
-                     , spl ~ c(view(x, ith_l) %>% { `if`(is.na(.), NULL, .) }
-                             , view(spl, c_l(which_last_non_empty(spl):length(spl)))))
-                }, seq_along(pl), init = pl))
-         }) 
+           out <- d
+           nas <- vapply(x, is.na, logical(1))
+           nas_l <- c_l(nas)
+           as_l <- c_l(!nas)
+           
+           out %>%
+             send(nas_l %.% fname_l, nas_l) %>%
+             over(as_l, el ~ paste0(x, sep, view(el, fname_l)))
+         })
+  })
 
 #' Create a lens into the file extension
 #'
