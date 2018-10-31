@@ -36,77 +36,53 @@ substr_l <- function(first, last){
 #' Strsplit lens
 #'
 #' A lens into a split representation of a string. Here
-#' [view] is equivalent to [strsplit] with `fixed = TRUE`
-#' [set] is equivalent to [paste0] `collapse = split` mapped
+#' [view] is almost equivalent to [strsplit] with `fixed = TRUE`,
+#' the difference is that empty strings are included after a
+#' trailing seperator. E.g. `view("/x/", strsplit_l("/"))` returns
+#' `list(c("", "x", ""))` where `strsplit("/x/", "/")` returns
+#' `list(c("", "x"))`.
+#' [set] is equivalent to [paste0]`(x, collapse = split)` mapped
 #' over each input with [vapply].
+#'
+#' Essentially the opposite of [collapse_l]
 #' 
 #' @param split The string to split at, this cannot be a regex (yet?).
 #' @export
 strsplit_l <- function(split){
-  lens(view = function(d) strsplit(d, split, fixed = TRUE)
+  lens(view = function(d) strsplit(paste0(d,split), split, fixed = TRUE)
      , set = function(d, x){
          d[] <- vapply(x, function(strs) paste0(strs, collapse = split), character(1))
          d
        })
 }
 
-#' Create lens into the file extension
+#' Collapse Lens
 #'
-#' A lens that focuses on the extension of a filepath 
-#' Inspiration/regex pieces from Jim Hester and r-lib's fs package.
-#' The function creates one of two `last` which considers everything
-#' after the last dot (`.`) an extension, and `first` which considers
-#' everything after the first dot in the basename of the file to be
-#' part of the file extension.
-#' @param extension last or first indicating what type of extensions to
-#' focus on.
+#' [view] renders a list of character vectors as a vector of strings. Elements of
+#' the input character vectors are pasted together with `paste0(v, collapse = collapse)`.
+#' [set] replaces the input character vector with the replacement
+#' data [view]ed with [strsplit_l]("collapse").
+#'
+#' Essentially the opposite of [strsplit_l]
+#' 
+#' @param collapse The collapse string for `view` and the split string for `set`.
+#' @examples
+#' view(list(c("a", "b", "c")), collapse_l("-"))
+#' set(list(c("a", "b", "c")), collapse_l("-"), c("a-b"))
+#' set(list(c("a", "b", "c")), collapse_l("-"), c("qr-pz"))
 #' @export
-fext_l <- function(extension = c("last", "first")){
-  sep <- .Platform$file.sep
-  extension <- match.arg(extension)
-  rexp <- 
-    paste0("(?<!^|[.]|", sep, ")[.]"
-         , `if`(extension == "last"
-              , "([^.", "([^")
-         , sep, "]*)$")
-  
+collapse_l <- function(collapse){
   lens(view =
          function(d){
-           matches <- regexpr(rexp, d, perl = TRUE)
-           ext_start <- attr(matches, "capture.start") %>% { .[,ncol(.)] }
-           ext_length <- attr(matches, "capture.length") %>% { .[,ncol(.)] }
-
-           vapply(seq_along(d), function(i){
-             if(ext_start[i] == -1){
-               NA_character_
-             } else {
-               substring(d[i], ext_start[i], ext_start[i] + ext_length[i])
-             }
-           }, character(1))
+           vapply(d, function(strs) paste0(strs, collapse = collapse)
+                , character(1))
          }
      , set =
          function(d,x){
-           if(any(grepl(sep, x)))
-             stop("File extensions replacement can't contain path separators")
-           
-           matches <- regexpr(rexp, d, perl = TRUE)
-           ext_start <- attr(matches, "capture.start") %>% { .[,ncol(.)] }
-           ext_length <- attr(matches, "capture.length") %>% { .[,ncol(.)] }
-
-           updated <-
-             mapply(function(old, new, start, length){
-               if(start == -1 && is.na(new)) return(old)
-               
-               if(extension == "last" && grepl("\\.", new))
-                 stop("For `fext_l` with `extension = 'last'` the replacement extensions must "
-                    , "not contain any `.` characters. "
-                    , "For example 'tar' cannot be replaced with 'tar.gz'. ")
-
-               if(start == -1)
-                 start <- nchar(old) + 2
-
-               basename <- substring(old, 1, start - 2)
-               if(is.na(new)) return(basename)
+           d[] <- view(x, strsplit_l(collapse))
+           d
+         })
+}
 
                paste0(basename, ".", new)
              }, d, x, ext_start, ext_length)

@@ -11,7 +11,14 @@ strsplit_l(split)
 }
 \description{
 A lens into a split representation of a string. Here
-\link{view} is equivalent to \link{strsplit} with \code{fixed = TRUE}
-\link{set} is equivalent to \link{paste0} \code{collapse = split} mapped
+\link{view} is almost equivalent to \link{strsplit} with \code{fixed = TRUE},
+the difference is that empty strings are included after a
+trailing seperator. E.g. \code{view("/x/", strsplit_l("/"))} returns
+\code{list(c("", "x", ""))} where \code{strsplit("/x/", "/")} returns
+\code{list(c("", "x"))}.
+\link{set} is equivalent to \link{paste0}\code{(x, collapse = split)} mapped
 over each input with \link{vapply}.
+}
+\details{
+Essentially the opposite of \link{collapse_l}
 }
