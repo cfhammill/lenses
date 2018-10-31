@@ -89,13 +89,6 @@ collapse_l <- function(collapse){
 #' This is strsplit_l(.Platform$file.sep)
 #' @export
 path2list_l <- strsplit_l(.Platform$file.sep)
-  
-
-which_last_non_empty <- function(x){
-  lne <- which(x != "") %>% { .[length(.)] }
-  if(length(lne) == 0) lne <- length(x)
-  lne
-}
 
 #' Lens into the name and extension of a path
 #'
@@ -105,20 +98,24 @@ which_last_non_empty <- function(x){
 #'
 #' @export
 fname_l <-
-  lens(view = basename
-     , set =
-         function(d,x){
-           sep <- .Platform$file.sep
-           if(any(grepl(sep, x)))
-             stop("Replacements in `fname_l` cannot contain file separators")
-           
-           over(d, path2list_l,
-                pl ~ Reduce(function(acc, i){
-                  ith_l <- c_l(i)
-                  over(acc, ith_l
-                     , spl ~ set(spl, c_l(which_last_non_empty(spl)), view(x, ith_l)))
-                }, seq_along(pl), init = pl))
-         })
+  path2list_l %.%
+  map_l(
+    rev_l %.%
+    drop_while_il(seg ~ seg == "") %.%
+    first_l
+  ) %.%
+  collapse_l(.Platform$file.sep) %>%
+  ## Add an extra argument check to set to ensure no path seperators
+  over(c_l("set", body_l), function(bdy){
+    rlang::expr({
+      if(any(grepl(.Platform$file.sep, x)))
+        stop("Replacements in `fname_l` cannot have "
+           , .Platform$file.sep
+           , " in them")
+
+      !!bdy
+    })
+  })
 
 #' Lens into the path of the file
 #'
