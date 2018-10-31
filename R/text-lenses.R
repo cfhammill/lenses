@@ -204,15 +204,15 @@ fext_l <- function(extension = c("last", "first")){
     nml <- c_l(fname_l, strsplit_l("."), map_l(last_l), unlist_l)
     # this lens is exactly as above, but with an extra validation
     # that the replacement doesn't contain `.`
-    over(nml, c_l("set", body_l)
-       , function(cmd){
-         rlang::expr({
-           if(any(grepl("\\.", x)))
+    over(nml, c_l("set")
+       , function(sf){
+          function(d,x){
+            if(any(grepl("\\.", x)))
              stop("Replacement in `fext_l` with `extension = 'last'` can't"
                 , " contain `.`")
            
-           !!cmd
-         })
+            sf(d,x)
+          }
        })
   }
 }
