@@ -84,8 +84,12 @@ collapse_l <- function(collapse){
          })
 }
 
-               paste0(basename, ".", new)
-             }, d, x, ext_start, ext_length)
+#' Convert paths to vectors of path components
+#'
+#' This is strsplit_l(.Platform$file.sep)
+#' @export
+path2list_l <- strsplit_l(.Platform$file.sep)
+  
 
            setNames(updated, NULL)
          }
