@@ -21,6 +21,7 @@ part of the file extension.
 view("hi.tar.gz", fext_l())
 view("...hi", fext_l())
 view("hi.tar.gz", fext_l("first"))
+set("hi.tar.gz", fext_l("first"), NA)
 set("hi.tar.gz", fext_l(), "xz")
 set("hi.tar.gz", fext_l("first"),  "tgz")
 set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l("first"), c("tgz", "wut"))

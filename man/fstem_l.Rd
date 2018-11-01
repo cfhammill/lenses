@@ -18,10 +18,10 @@ everything after the first dot in the basename of the file to be
 part of the file extension.
 }
 \examples{
-view("hi.tar.gz", fext_l())
-view("hi.tar.gz", fext_l("first"))
-set("hi.tar.gz", fext_l(), "xz")
-set("hi.tar.gz", fext_l("first"),  "tgz")
-set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l("first"), c("tgz", "wut"))
-set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l(), c("tgz", "wut"))
+view("hi.tar.gz", fstem_l())
+view("hi.tar.gz", fstem_l("first"))
+set("hi.tar.gz", fstem_l(), "new")
+set("hi.tar.gz", fstem_l("first"),  "new")
+set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l("first"), c("file1", "file2"))
+set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l(), c("file1", "file2"))
 }

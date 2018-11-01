@@ -178,6 +178,7 @@ fpath_l <-
 #' view("hi.tar.gz", fext_l())
 #' view("...hi", fext_l())
 #' view("hi.tar.gz", fext_l("first"))
+#' set("hi.tar.gz", fext_l("first"), NA)
 #' set("hi.tar.gz", fext_l(), "xz")
 #' set("hi.tar.gz", fext_l("first"),  "tgz")
 #' set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l("first"), c("tgz", "wut"))
@@ -203,7 +204,7 @@ fext_l <- function(extension = c("last", "first")){
                      collapse_l("."))
            }
        , set =
-           function(d,x){
+           function(d,x){             
              paste0(view(d, fstem_l(extension)), ".", x)
            }
          )
@@ -236,10 +237,10 @@ fext_l <- function(extension = c("last", "first")){
 #' @examples
 #' view("hi.tar.gz", fstem_l())
 #' view("hi.tar.gz", fstem_l("first"))
-#' set("hi.tar.gz", fstem_l(), "xz")
-#' set("hi.tar.gz", fstem_l("first"),  "tgz")
-#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l("first"), c("tgz", "wut"))
-#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l(), c("tgz", "wut"))
+#' set("hi.tar.gz", fstem_l(), "new")
+#' set("hi.tar.gz", fstem_l("first"),  "new")
+#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l("first"), c("file1", "file2"))
+#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l(), c("file1", "file2"))
 #' @export
 fstem_l <- function(extension = c("last", "first")){
   extension = match.arg(extension)
@@ -271,9 +272,10 @@ fstem_l <- function(extension = c("last", "first")){
   } else {
     lens(view =
            function(d){
-             leading_dots <- view(d, base %.% map_l(take_while_il(~ . == "")))
-             has_leading_dots <-
-               vapply(leading_dots, function(ld) length(ld) != 0, logical(1))
+             nleading_dots <-
+               view(d, base %.%
+                       map_l(take_while_il(~ . == "") %.%
+                             to_l(length)))
 
              fstem <-
                view(d, base %.%
@@ -285,11 +287,8 @@ fstem_l <- function(extension = c("last", "first")){
                     )
 
              vapply(seq_along(fstem), function(i){
-               `if`(has_leading_dots[i]
-                  , paste0(rep(".", length(leading_dots[i]))
-                         , fstem[i])
-                  , fstem[i])
-               }, character(1))
+               paste0(rep(".", nleading_dots[i]), fstem[i])
+             }, character(1))             
            }
        , set =
            function(d, x)
