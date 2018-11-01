@@ -176,6 +176,7 @@ fpath_l <-
 #' focus on.
 #' @examples
 #' view("hi.tar.gz", fext_l())
+#' view("...hi", fext_l())
 #' view("hi.tar.gz", fext_l("first"))
 #' set("hi.tar.gz", fext_l(), "xz")
 #' set("hi.tar.gz", fext_l("first"),  "tgz")
@@ -183,36 +184,116 @@ fpath_l <-
 #' set(c("hi.tar.gz", "woah.txt.zip.gz"), fext_l(), c("tgz", "wut"))
 #' @export
 fext_l <- function(extension = c("last", "first")){
-  extension = match.arg(extension)
+  extension <- match.arg(extension)
+  d_isempty <- delay(~ . == "", TRUE)
+  dr_all_empty_and_reset <- function(d){
+    res <- view(d, drop_while_il(d_isempty))
+    environment(d_isempty)$v <- TRUE
+    res
+  }
+  base <-
+    fname_l %.%
+    strsplit_l(".") %.%
+    to_l(function(el) lapply(el, dr_all_empty_and_reset))
+  
   if(extension == "first"){
-    split_name <- fname_l %.% strsplit_l(".")
-    dlast_and_collapse <- map_l(c_l(-1)) %.% collapse_l(".")
-    all_first <- map_l(first_l)
-    
-    lens(view = function(d) view(d, split_name %.% dlast_and_collapse)
+    lens(view =
+           function(d){
+             view(d, base %.%
+                     collapse_l("."))
+           }
        , set =
            function(d,x){
-             send_over(d
-                     , split_name %.% all_first %.% unlist_l
-                     , fname_l
-                     , nm ~ paste0(nm, ".", x)
-                     )
+             paste0(view(d, fstem_l(extension)), ".", x)
            }
          )
   
   } else {
-    nml <- c_l(fname_l, strsplit_l("."), map_l(last_l), unlist_l)
-    # this lens is exactly as above, but with an extra validation
-    # that the replacement doesn't contain `.`
-    over(nml, c_l("set")
-       , function(sf){
-          function(d,x){
-            if(any(grepl("\\.", x)))
-             stop("Replacement in `fext_l` with `extension = 'last'` can't"
-                , " contain `.`")
-           
-            sf(d,x)
-          }
-       })
+    firsts_l <- map_l(rev_l %.% indexes_l(1)) %.% unlist_l 
+    lens(view =
+           function(d) view(d, base %.% firsts_l)
+       , set =
+           function(d,x){
+             if(any(vapply(x, function(v) grepl("\\.", v), logical(1))))
+               stop("Replacement values in `fext_l` with `extension='last'`"
+                  , " can't contain `.`")
+             
+             paste0(view(d, fstem_l(extension)), ".", x) 
+           }
+         )
+  }
+}
+
+#' Lens into the extensionless file
+#'
+#' A lens that focuses on the file with the extension removed.
+#' The function creates one of two lenses, `last` extension which considers everything
+#' after the last dot (`.`) an extension, and `first` which considers
+#' everything after the first dot in the basename of the file to be
+#' part of the file extension.
+#' @param extension last or first indicating what type of extensions to
+#' focus on.
+#' @examples
+#' view("hi.tar.gz", fstem_l())
+#' view("hi.tar.gz", fstem_l("first"))
+#' set("hi.tar.gz", fstem_l(), "xz")
+#' set("hi.tar.gz", fstem_l("first"),  "tgz")
+#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l("first"), c("tgz", "wut"))
+#' set(c("hi.tar.gz", "woah.txt.zip.gz"), fstem_l(), c("tgz", "wut"))
+#' @export
+fstem_l <- function(extension = c("last", "first")){
+  extension = match.arg(extension)
+  base <- fname_l %.% strsplit_l(".")
+  d_isempty <- delay(~ . == "", TRUE)
+  tk_all_empty_and_reset <- function(d){
+    res <- view(d, take_while_il(d_isempty))
+    environment(d_isempty)$v <- TRUE
+    res
+  }
+  resetting_take_empty <- to_l(function(el) lapply(el, tk_all_empty_and_reset))
+  
+
+  if(extension == "first"){
+    lens(view =
+           function(d)
+             view(d, base %.%
+                     resetting_take_empty %.%
+                     collapse_l("."))
+       , set =
+           function(d,x){
+             if(any(vapply(x, function(v) grepl("\\.", v), logical(1))))
+               stop("Replacement values in `fstem_l` with `extension='first'`"
+                  , " can't contain `.`")
+
+             paste0(x, ".", view(d, fext_l(extension)))
+           }
+         )
+  } else {
+    lens(view =
+           function(d){
+             leading_dots <- view(d, base %.% map_l(take_while_il(~ . == "")))
+             has_leading_dots <-
+               vapply(leading_dots, function(ld) length(ld) != 0, logical(1))
+
+             fstem <-
+               view(d, base %.%
+                       map_l(drop_while_il(~ . == "") %.%
+                             rev_l %.%
+                             indexes_l(-1) %.%
+                             rev_l) %.%
+                       collapse_l(".")
+                    )
+
+             vapply(seq_along(fstem), function(i){
+               `if`(has_leading_dots[i]
+                  , paste0(rep(".", length(leading_dots[i]))
+                         , fstem[i])
+                  , fstem[i])
+               }, character(1))
+           }
+       , set =
+           function(d, x)
+             paste0(x, ".", view(d, fext_l(extension)))
+         )
   }
 }

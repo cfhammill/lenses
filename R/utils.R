@@ -2,6 +2,12 @@ utils::globalVariables(c(".", "!!", "!<-", "(<-")
                      , "lenses")
 
 
+delay <- function(f, v){
+  v <- v
+  f <- as_closure(f)
+  function(...){ last <- v; v <<- f(...); last }
+}
+
 symbol_gatherer <-
   function(expr){
     if(is.name(expr)) return(as.character(expr))
