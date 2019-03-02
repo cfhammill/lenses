@@ -200,11 +200,18 @@ fext_l <- function(extension = c("last", "first")){
   if(extension == "first"){
     lens(view =
            function(d){
-             view(d, base %.%
-                     collapse_l("."))
+             fname <- view(d, base)
+             if(length(fname) == 0)
+               return(NULL)
+
+             view(fname, collapse_l("."))
            }
        , set =
-           function(d,x){             
+           function(d,x){
+             if((!is.null(x) && !is.character(x)) || any(is.na(x)))
+               stop("Replacement file extension must be a character vector without NAs")
+             
+             ext <- `if`(!is.null(x), "", paste0(".", x))
              paste0(view(d, fstem_l(extension)), ".", x)
            }
          )
