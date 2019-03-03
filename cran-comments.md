@@ -1,4 +1,16 @@
-## Resubmission
+## Resubmission 
+
+### 0.0.3
+
+This is a resubmission. Previous comments
+
+- Capitalize H in Haskell
+- Provide URL links to lens resources in DESCRIPTION
+- Thoroughly add examples to documention
+
+I believe we have addressed all of the above.
+
+### 0.0.2
 
 This is a resubmission (with a name change). Previous version
 was called focal, now it is called lenses. To correct the

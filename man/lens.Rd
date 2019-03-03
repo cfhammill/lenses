@@ -19,7 +19,7 @@ the original data.}
 be \code{set} into.}
 }
 \description{
-A \code{lens} represents the process of focussing on a specific part of a data structure.
+A \code{lens} represents the process of focusing on a specific part of a data structure.
 We represent this via a \code{view} function and
 an \code{set} function, roughly corresponding to object-oriented
 "getters" and "setters" respectively.

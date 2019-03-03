@@ -24,5 +24,4 @@ Collate:
     'base-lenses.R'
     'utils.R'
     'dataframe-lenses.R'
-    'text-lenses.R'
     'utils-pipe.R'

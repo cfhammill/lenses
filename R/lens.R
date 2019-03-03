@@ -1,6 +1,6 @@
 #' Construct a lens
 #'
-#' A `lens` represents the process of focussing on a specific part of a data structure.
+#' A `lens` represents the process of focusing on a specific part of a data structure.
 #' We represent this via a `view` function and
 #' an `set` function, roughly corresponding to object-oriented
 #' "getters" and "setters" respectively.

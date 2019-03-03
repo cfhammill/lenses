@@ -12,5 +12,5 @@ drop_while_il(f)
 \description{
 A lens into all elements starting from the first
 element that doesn't satisfy a predicate. Essentially
-the complement of \link{take_while_l}
+the complement of \link{take_while_il}
 }

@@ -303,11 +303,11 @@ els_l <-
   select_l(Sepal.Length:Petal.Width) %.%
   map_l(index(1))
 
-map_over(packed_iris, els_l, ~ . + 10) %>%
+over_map(packed_iris, els_l, ~ . + 10) %>%
   str(2)
 ```
 
-Here we use the `map_over` function to apply a function to each element,
+Here we use the `over_map` function to apply a function to each element,
 you could equivalently use `over` with `lapply` as well. As you can see
 setting and applying functions to multiple elements of nested data is
 dramatically improved by using lenses.

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tidyselect elements by name — select_l • lenses</title>
+<title>Map a function over a list lens — over_map • lenses</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,11 +30,10 @@
 
 
 
-<meta property="og:title" content="Tidyselect elements by name — select_l" />
+<meta property="og:title" content="Map a function over a list lens — over_map" />
 
-<meta property="og:description" content="Create a lens into a named collection. On set
-names of the input are not changed. This generalizes dplyr::select
-to arbitrary named collections and allows updating." />
+<meta property="og:description" content="Apply the specified function to each element
+of the subobject." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,44 +108,44 @@ to arbitrary named collections and allows updating." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tidyselect elements by name</h1>
-    <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/dataframe-lenses.R'><code>R/dataframe-lenses.R</code></a></small>
-    <div class="hidden name"><code>select_l.Rd</code></div>
+    <h1>Map a function over a list lens</h1>
+    <small class="dont-index">Source: <a href='https://github.com/cfhammill/lenses/blob/master/R/verbs.R'><code>R/verbs.R</code></a></small>
+    <div class="hidden name"><code>over_map.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Create a lens into a named collection. On <a href='set.html'>set</a>
-names of the input are not changed. This generalizes <a href='https://dplyr.tidyverse.org/reference/select.html'>dplyr::select</a>
-to arbitrary named collections and allows updating.</p>
+    <p>Apply the specified function to each element
+of the subobject.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>select_l</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>over_map</span>(<span class='no'>d</span>, <span class='no'>l</span>, <span class='no'>f</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>An expression to be interpreted by <a href='http://www.rdocumentation.org/packages/tidyselect/topics/vars_select'>tidyselect::vars_select</a>
-which is the same interpreter as <a href='https://dplyr.tidyverse.org/reference/select.html'>dplyr::select</a></p></td>
+      <th>d</th>
+      <td><p>the data</p></td>
+    </tr>
+    <tr>
+      <th>l</th>
+      <td><p>the lens</p></td>
+    </tr>
+    <tr>
+      <th>f</th>
+      <td><p>the function to use, potentially a <code>~</code> specified anonymous function.</p></td>
     </tr>
     </table>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>lets</span> <span class='kw'>&lt;-</span> <span class='fu'>setNames</span>(<span class='fu'>seq_along</span>(<span class='no'>LETTERS</span>), <span class='no'>LETTERS</span>)
-<span class='fu'><a href='set.html'>set</a></span>(<span class='no'>lets</span>, <span class='fu'>select_l</span>(<span class='no'>G</span>:<span class='no'>F</span>, <span class='no'>A</span>, <span class='no'>B</span>), <span class='fl'>1</span>:<span class='fl'>4</span>) <span class='co'># A and B are 3,4 for a quick check</span></div><div class='output co'>#&gt;  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z 
-#&gt;  3  4  3  4  5  2  1  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+                </ul>
 
   </div>
 </div>

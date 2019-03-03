@@ -173,7 +173,7 @@ take_while_il <- function(f){
 #'
 #' A lens into all elements starting from the first
 #' element that doesn't satisfy a predicate. Essentially
-#' the complement of [take_while_l]
+#' the complement of [take_while_il]
 #'
 #' @param f the predicate (logical) function
 #' @export
