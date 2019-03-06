@@ -20,6 +20,12 @@ library(dplyr)
 ## Installation
 
 ```{r, eval = FALSE}
+install.packages("lenses")
+```
+
+or
+
+```{r, eval = FALSE}
 devtools::install_github("cfhammill/lenses")
 ```
 
