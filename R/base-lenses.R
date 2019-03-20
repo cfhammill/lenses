@@ -424,7 +424,8 @@ map_l <- function(l){
            if(!is.list(d) && !is.list(x) && all(vapply(new_d, is_length1_atomic, logical(1))))
              new_d <- unlist(new_d, recursive = FALSE)
            
-           new_d
+           d[] <- new_d
+           d
          })
 }
 
