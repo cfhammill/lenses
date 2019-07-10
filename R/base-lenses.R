@@ -363,7 +363,9 @@ env_l <- lens(environment, `environment<-`)
 rows_l <- function(rows, drop = FALSE){
   lens(view = function(d) d[rows, ,drop = drop]
      , set = function(d, x){
-       d[rows, ] <- x
+       if (length(rows) > 0){
+         d[rows, ] <- x
+       }
        d
      })
 }

@@ -30,7 +30,9 @@ filter_il <- function(...){
        }
      , set = function(d,x){
          filt_vec <- rlang::eval_tidy(filt_quo, d)
-         d[filt_vec,] <- x
+         if (any(filt_vec)){
+           d[filt_vec,] <- x
+         }
          d
      })
 }
@@ -67,7 +69,9 @@ filter_l <- function(...){
        }
      , set = function(d,x){
          filt_vec <- rlang::eval_tidy(filt_expr, d)
-         d[filt_vec, ! names(d) %in% expr_symbols] <- x
+         if (any(filt_vec)) {
+           d[filt_vec, ! names(d) %in% expr_symbols] <- x
+         }
          d
      })
 }
